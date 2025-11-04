@@ -36,7 +36,7 @@ export default function ForgotPasswordPage() {
 
       if (response.ok) {
         setIsSubmitted(true)
-        toast.success("Reset link sent", { description: "Check your email for password reset instructions." })
+        toast.success("Reset link sent", { description: "Check your mail for password reset instructions." })
       } else {
         const data = await response.json()
         setError(data.message || "Failed to send reset email")

@@ -61,7 +61,7 @@ export default function LoginPage() {
           // Also navigate if the user manually dismisses the toast
           onDismiss: () => router.push("/dashboard"),
         });
-        login(result.user, result.accessToken)
+        login(result.data.user, result.data.accessToken)
       } else {
         setFormError(result.message || "Something went wrong! Please try again.")
       }

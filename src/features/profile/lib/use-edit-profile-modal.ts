@@ -24,7 +24,7 @@ async function uploadProfilePicture(userId: string, file: File) {
 }
 
 export function useEditProfileModal(user: any, onSave: () => void) {
-    const { login: updateUserContext } = useAuth()
+    const { updateUser } = useAuth()
     const [isSaving, setIsSaving] = useState(false)
     const [isUploading, setIsUploading] = useState(false)
     const [previewImage, setPreviewImage] = useState<string | null>(null)
@@ -52,7 +52,7 @@ export function useEditProfileModal(user: any, onSave: () => void) {
         try {
             const updatedData = await updateProfileDetails(user.id, { fullname, occupation, status })
             // Assuming `updateUserContext` correctly updates the user in the context and local storage
-            updateUserContext({ ...user, ...updatedData })
+            updateUser(updatedData)
             onSave()
         } catch (error) {
             console.error("Failed to save profile:", error)
@@ -69,7 +69,7 @@ export function useEditProfileModal(user: any, onSave: () => void) {
         try {
             const { avatarUrl } = await uploadProfilePicture(user.id, file)
             // Assuming `updateUserContext` correctly updates the user in the context and local storage
-            updateUserContext({ ...user, avatarUrl })\n            onSave()
+            updateUser({ avatarUrl })\n            onSave()
         } catch (error) {\n            console.error(\"Failed to upload picture:\", error)
         } finally {\n            setIsUploading(false)
         }\n    }

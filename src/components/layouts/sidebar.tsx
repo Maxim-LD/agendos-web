@@ -1,12 +1,13 @@
 "use client"
 
 import { useEffect } from "react"
-import Link from "next/link"
 import { usePathname } from "next/navigation"
+import Link from "next/link"
 import { AgendosIcon } from "@/features/brand/components/logo/AgendosIcon"
 import { AgendosWordmark } from "@/features/brand/components/logo/AgendosWordmark"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/providers"
 import { LogOut } from "lucide-react"
 import { navItems } from "./constants"
 import { useSidebar } from "./use-sidebar"
@@ -14,6 +15,7 @@ import { useSidebar } from "./use-sidebar"
 export function Sidebar() {
   const { isExpanded, setIsExpanded } = useSidebar()
   const pathname = usePathname()
+  const { logout } = useAuth()
 
   return (
     <aside
@@ -53,19 +55,18 @@ export function Sidebar() {
           ))}
         </nav>
         <div className="mt-auto border-t p-4">
-          <Link href="/">
-            <Button
-              variant="ghost"
-              className={cn(
-                "w-full gap-3 text-red-500 hover:bg-red-50 hover:text-red-600",
-                isExpanded ? "justify-start" : "justify-center"
-              )}
-              title={!isExpanded ? "Log Out" : undefined}
-            >
-              <LogOut className="h-5 w-5" />
-              {isExpanded && "Log Out"}
-            </Button>
-          </Link>
+          <Button
+            onClick={logout}
+            variant="ghost"
+            className={cn(
+              "w-full gap-3 text-red-500 hover:bg-red-50 hover:text-red-600",
+              isExpanded ? "justify-start" : "justify-center"
+            )}
+            title={!isExpanded ? "Log Out" : undefined}
+          >
+            <LogOut className="h-5 w-5" />
+            {isExpanded && "Log Out"}
+          </Button>
         </div>
       </div>
     </aside>

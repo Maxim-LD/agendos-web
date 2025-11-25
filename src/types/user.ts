@@ -3,10 +3,12 @@ interface User {
     fullname: string
     email: string
     occupation?: string
+    phone?: string
     status?: string
     avatarUrl?: string
-    isEmailVerified?: boolean,
-    isPhoneVerified?: boolean,
+    isEmailVerified?: boolean
+    isPhoneVerified?: boolean
+    date_of_birth?: Date
 }
 
 export type { User }

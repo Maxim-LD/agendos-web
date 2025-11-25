@@ -1,16 +1,17 @@
 "use client"
 
 import * as React from "react"
-import { ThemeProvider as NextThemesProvider, type ThemeProviderProps } from "next-themes"
+import { ThemeProvider as NextThemesProvider, type ThemeProviderProps } from "next-themes";
 import { useRouter } from "next/navigation"
-import { createContext, useContext, useState, useEffect } from "react"
+import { createContext, useContext, useState, useEffect, useCallback } from "react"
 import { User } from "@/types/user"
 
 interface AuthContextType {
     user: User | null
     accessToken: string | null
-    login: (userData: User, token: string) => void
+    login: (userData: User | null, token: string | null, setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>) => void 
     logout?: () => void
+    triggerSessionExpired: () => void
     updateUser: (data: Partial<User>) => void
     isLoading: boolean
 }
@@ -21,32 +22,99 @@ function AuthProvider({ children }: { children: React.ReactNode}) {
     const [user, setUser] = useState<User | null>(null)
     const [accessToken, setAccessToken] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(true)
+    const [isSessionExpired, setIsSessionExpired] = useState(false)
+    const [hasMounted, setHasMounted] = useState(false);
     const router = useRouter()
     
     useEffect(() => {
-        try {
-            const storedUser = localStorage.getItem('user')
-            const storedToken = localStorage.getItem('accessToken')
-
-            if (storedUser && storedToken) {
-                setUser(JSON.parse(storedUser))
-                setAccessToken(storedToken)
-            }
-        } catch (error) {
-            console.error("Failed to parse user from localStorage", error)
-            // Clear corrupted storage
-            localStorage.removeItem('user')
-            localStorage.removeItem('accessToken')
-        } finally {
-            setIsLoading(false)
-        }
-    }, [])
+        setHasMounted(true);
+    }, []);
     
-    const login = (userData: User, token: string) => {
+    const logout = useCallback(() => { // to call backend logout endpoint
+        setUser(null)
+        setAccessToken(null)
+        localStorage.removeItem('user')
+        localStorage.removeItem('accessToken')
+        router.push('/auth/login')
+    }, [router])
+
+    const triggerSessionExpired = useCallback(() => {
+        // Clear user state but trigger modal instead of immediate redirect
+        setUser(null);
+        setAccessToken(null);
+        localStorage.removeItem('user');
+        localStorage.removeItem('accessToken');
+        setIsSessionExpired(true);
+    }, []);
+
+    const SessionExpiredModal = () => {
+        const [countdown, setCountdown] = useState(5);
+
+        useEffect(() => {
+            if (countdown <= 0) {
+                router.push('/auth/login');
+                setIsSessionExpired(false);
+                return;
+            }
+            const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+            return () => clearTimeout(timer);
+        }, [countdown, router]);
+
+        const overlayStyle: React.CSSProperties = { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' };
+        const modalStyle: React.CSSProperties = { background: 'white', padding: '2rem', borderRadius: '8px', textAlign: 'center', color: 'black' };
+
+        return (
+            <div style={overlayStyle}><div style={modalStyle}><h2>Session Expired</h2><p>Your session has ended. Please log in again.</p><p>Redirecting in {countdown}...</p></div></div>
+        );
+    };
+
+    useEffect(() => {
+        const initializeAuth = async () => {
+            const storedToken = localStorage.getItem('accessToken');
+
+            // If we have a token, try to refresh the session
+            if (storedToken) {
+                try {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh-token`,
+                        { method: 'POST',
+                            credentials: 'include'
+                        } 
+                    )
+                    if (!response.ok) {
+                        throw new Error('Refresh token failed');
+                    }
+                    const responseData = await response.json();
+                    console.log(responseData)
+                    if (!responseData.data.user || !responseData.data.token) {
+                        console.error("Refresh token returned invalid user data or token.");
+                        throw new Error('Invalid refresh token response');
+                    }
+                    login(responseData.data.user, responseData.data.token, setIsLoading);
+                } catch (error) {
+                    console.error("Session refresh failed, logging out.", error);
+                    setIsLoading(false); // Set loading to false on error
+                    triggerSessionExpired();
+                }
+            } else {
+                // If there's no token at all, we are not logged in.
+                setIsLoading(false);
+            }
+        };
+
+        initializeAuth();
+    }, [triggerSessionExpired]);
+    
+    const login = (userData: User | null, token: string | null, setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>) => {
+        if (!userData || !token) {
+            console.error("Login failed: userData or token is missing.");
+            if (setIsLoading) setIsLoading(false); // Ensure loading is false on failed login
+            return;
+        }
         setUser(userData)
         setAccessToken(token)
         localStorage.setItem('user', JSON.stringify(userData))
-        // localStorage.setItem('accessToken', token)
+        localStorage.setItem('accessToken', token)
+        if (setIsLoading) setIsLoading(false); // Set loading to false only after state is updated
     }
 
     // Function to update user data in state and localStorage
@@ -60,22 +128,15 @@ function AuthProvider({ children }: { children: React.ReactNode}) {
         })
     }
 
-    const logout = () => {
-        setUser(null)
-        setAccessToken(null)
-        localStorage.removeItem('user')
-        localStorage.removeItem('accessToken')
-        router.push('/login')
-    }
-
     return <AuthContext.Provider value={{
         user,
         accessToken,
         login,
         logout,
+        triggerSessionExpired,
         isLoading,
         updateUser,
-    }}>{children}
+    }}>{children}{isSessionExpired && hasMounted && <SessionExpiredModal />}
     </AuthContext.Provider>
 }
 

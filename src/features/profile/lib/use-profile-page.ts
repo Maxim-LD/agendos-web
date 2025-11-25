@@ -26,7 +26,7 @@ export function useProfilePage() {
 
   useEffect(() => {
     if (!isLoading && !accessToken) {
-      router.replace("auth/login")
+      router.replace("/auth/login")
     }
   }, [isLoading, accessToken, router])
 

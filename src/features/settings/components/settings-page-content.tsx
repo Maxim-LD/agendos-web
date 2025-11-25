@@ -1,6 +1,6 @@
 "use client"
 
-import { Loader2, HelpCircle } from "lucide-react"
+import { Loader2, HelpCircle, ChevronRight } from "lucide-react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { ComingSoonModal } from "@/components/ui/coming-soon-modal"

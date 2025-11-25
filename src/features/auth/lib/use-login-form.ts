@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/providers"
 import { toast } from "sonner"
+import api from "@/lib/api"
 
 export function useLoginForm() {
   const [formData, setFormData] = useState({
@@ -28,21 +29,22 @@ export function useLoginForm() {
     setFormError(null)
 
     try {
-      const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`
-      const res = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await api.request(
+        "/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         },
-        body: JSON.stringify(formData),
-        credentials: "include",
-      })
+      )
 
       const result = await res.json()
       if (result.success) {
         toast.success("Logged in Successfully! 🎉", {
           description: `Welcome back to AGENDOS, ${result.data.user.fullname}!`,
-          duration: 2000,
+          duration: 1000,
           onAutoClose: () => router.push("/dashboard"),
           onDismiss: () => router.push("/dashboard"),
         })

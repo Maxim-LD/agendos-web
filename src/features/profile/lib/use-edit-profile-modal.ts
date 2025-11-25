@@ -3,8 +3,6 @@
 import { useState, useRef, useEffect } from "react"
 import { useAuth } from "@/providers"
 
-// --- Mock API Endpoints ---
-
 const MOCK_API_ENDPOINT = "/api/user/profile"
 
 type ProfileUpdateData = { fullname?: string; occupation?: string; status?: string }
@@ -58,7 +56,8 @@ export function useEditProfileModal(user: any, onSave: () => void) {
             console.error("Failed to save profile:", error)
         } finally {
             setIsSaving(false)
-        }\n    }
+        }
+    }
 
     const handlePictureUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
@@ -69,10 +68,28 @@ export function useEditProfileModal(user: any, onSave: () => void) {
         try {
             const { avatarUrl } = await uploadProfilePicture(user.id, file)
             // Assuming `updateUserContext` correctly updates the user in the context and local storage
-            updateUser({ avatarUrl })\n            onSave()
-        } catch (error) {\n            console.error(\"Failed to upload picture:\", error)
-        } finally {\n            setIsUploading(false)
-        }\n    }
+            updateUser({ avatarUrl });
+            onSave()
+        } catch (error) {
+            console.error("Failed to upload picture:", error)
+        } finally {
+            setIsUploading(false)
+        }
+    }
 
-    return {\n        fullname,\n        setFullname,\n        occupation,\n        setOccupation,\n        status,\n        setStatus,\n        isSaving,\n        isUploading,\n        previewImage,\n        fileInputRef,\n        getInitials,\n        handleSaveChanges,\n        handlePictureUpload,\n    }
+    return {
+        fullname,
+        setFullname,
+        occupation,
+        setOccupation,
+        status,
+        setStatus,
+        isSaving,
+        isUploading,
+        previewImage,
+        fileInputRef,
+        getInitials,
+        handleSaveChanges,
+        handlePictureUpload,
+    }
 }

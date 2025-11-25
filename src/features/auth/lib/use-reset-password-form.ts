@@ -42,7 +42,7 @@ export function useResetPasswordForm() {
       length: password.length >= 6,
       letter: /[a-zA-Z]/.test(password),
       number: /[0-9]/.test(password),
-      specialChar: /[!@#$%^&*()_+\-=[\\]{};':"\\|,.<>/?]/.test(password),
+      specialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
     })
   }
 

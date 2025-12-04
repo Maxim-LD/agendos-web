@@ -3,18 +3,14 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import api from "@/lib/api"
 
 export function useSignupForm() {
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
     password: "",
-    confirm_password: "",
-    username: "",
-    phone: "",
-    status: "",
-    occupation: "",
-    date_of_birth: "",
+    confirm_password: ""
   })
 
   const [isLoading, setIsLoading] = useState(false)
@@ -52,7 +48,7 @@ export function useSignupForm() {
     checkPasswordStrength(newPassword)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
     setFormError(null)
@@ -64,23 +60,25 @@ export function useSignupForm() {
     }
 
     try {
-      const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup`
-      const res = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      })
+      const res = await api.request(
+        '/auth/signup',
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      )
 
       const result = await res.json()
       if (result.success) {
         toast.success("Sign Up Successful! 🎉", {
           description: `Welcome to AGENDOS, ${result.data.fullname}!`,
           duration: 2000,
-          onAutoClose: () => router.push("/dashboard"),
-          onDismiss: () => router.push("/dashboard"),
         })
+        // On success, navigate to the onboarding flow with the email as a query param
+        router.push(`/onboarding?email=${formData.email}`)
       } else {
         setFormError(result.message || "Something went wrong. Please try again.")
       }

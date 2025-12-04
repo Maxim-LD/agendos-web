@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -28,6 +29,7 @@ export function SignupForm() {
     setShowConfirmPassword,
     setIsPasswordFocused,
   } = useSignupForm()
+  const router = useRouter()
 
   const [comingSoonOpen, setComingSoonOpen] = useState(false)
   const [selectedFeature, setSelectedFeature] = useState("")
@@ -48,7 +50,7 @@ export function SignupForm() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="fullname">Full Name</Label>
               <Input
                 id="fullname"
                 name="fullname"
@@ -119,8 +121,7 @@ export function SignupForm() {
 
             <div className="space-y-2">
               <Label htmlFor="confirmPassword" className="flex items-center">
-                Confirm Password
-                {formData.password && formData.password === formData.confirm_password}
+                Confirm Password               
               </Label>
               <div className="relative">
                 <Input
@@ -145,78 +146,6 @@ export function SignupForm() {
                   {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                name="username"
-                type="text"
-                placeholder="johndoe"
-                className="placeholder:text-charcoal-black/40"
-                value={formData.username}
-                onChange={handleChange}
-                disabled={isLoading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                id="phone"
-                name="phone"
-                type="tel"
-                placeholder="e.g., 08012345678 or +2348012345678"
-                className="placeholder:text-charcoal-black/40"
-                value={formData.phone}
-                onChange={handleChange}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="occupation">Occupation</Label>
-            <Input
-              id="occupation"
-              name="occupation"
-              type="text"
-              placeholder="e.g. Software Engineer"
-              className="placeholder:text-charcoal-black/40"
-              value={formData.occupation}
-              onChange={handleChange}
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="date_of_birth">Date of Birth</Label>
-              <Input
-                id="date_of_birth"
-                name="date_of_birth"
-                type="date"
-                placeholder=""
-                className="placeholder:text-charcoal-black/40"
-                value={formData.date_of_birth}
-                onChange={handleChange}
-                disabled={isLoading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <Input
-                id="status"
-                name="status"
-                type="text"
-                placeholder="e.g. Student, Employed"
-                className="placeholder:text-charcoal-black/40"
-                value={formData.status}
-                onChange={handleChange}
-                disabled={isLoading}
-              />
             </div>
           </div>
 

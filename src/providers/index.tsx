@@ -26,17 +26,30 @@ function AuthProvider({ children }: { children: React.ReactNode}) {
     const [hasMounted, setHasMounted] = useState(false);
     const router = useRouter()
     
+    // Set hasMounted flag to prevent hydration mismatch
     useEffect(() => {
         setHasMounted(true);
     }, []);
+
+    // Define login function first so it can be used in useEffect
+    const login = useCallback((userData: User | null, token: string | null) => {
+        if (!userData || !token) {
+            console.error("Login failed: userData or token is missing.");
+            return;
+        }
+        setUser(userData);
+        setAccessToken(token);
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('accessToken', token);
+    }, []);
     
-    const logout = useCallback(() => { // to call backend logout endpoint
-        setUser(null)
-        setAccessToken(null)
-        localStorage.removeItem('user')
-        localStorage.removeItem('accessToken')
-        router.push('/auth/login')
-    }, [router])
+    const logout = useCallback(() => {
+        setUser(null);
+        setAccessToken(null);
+        localStorage.removeItem('user');
+        localStorage.removeItem('accessToken');
+        router.push('/auth/login');
+    }, [router]);
 
     const triggerSessionExpired = useCallback(() => {
         // Clear user state but trigger modal instead of immediate redirect
@@ -58,7 +71,7 @@ function AuthProvider({ children }: { children: React.ReactNode}) {
             }
             const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
             return () => clearTimeout(timer);
-        }, [countdown, router]);
+        }, [countdown]);
 
         const overlayStyle: React.CSSProperties = { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' };
         const modalStyle: React.CSSProperties = { background: 'white', padding: '2rem', borderRadius: '8px', textAlign: 'center', color: 'black' };
@@ -68,7 +81,10 @@ function AuthProvider({ children }: { children: React.ReactNode}) {
         );
     };
 
+    // Initialize auth on mount only
     useEffect(() => {
+        if (!hasMounted) return;
+
         const initializeAuth = async () => {
             const storedToken = localStorage.getItem('accessToken');
 
@@ -79,21 +95,21 @@ function AuthProvider({ children }: { children: React.ReactNode}) {
                         { method: 'POST',
                             credentials: 'include'
                         } 
-                    )
+                    );
                     if (!response.ok) {
                         throw new Error('Refresh token failed');
                     }
                     const responseData = await response.json();
-                    console.log(responseData)
-                    if (!responseData.data.user || !responseData.data.token) {
+                    if (!responseData.user || !responseData.token) {
                         console.error("Refresh token returned invalid user data or token.");
                         throw new Error('Invalid refresh token response');
                     }
-                    login(responseData.data.user, responseData.data.token, setIsLoading);
+                    login(responseData.user, responseData.token);
                 } catch (error) {
                     console.error("Session refresh failed, logging out.", error);
-                    setIsLoading(false); // Set loading to false on error
                     triggerSessionExpired();
+                } finally {
+                    setIsLoading(false);
                 }
             } else {
                 // If there's no token at all, we are not logged in.
@@ -102,20 +118,7 @@ function AuthProvider({ children }: { children: React.ReactNode}) {
         };
 
         initializeAuth();
-    }, [triggerSessionExpired]);
-    
-    const login = (userData: User | null, token: string | null, setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>) => {
-        if (!userData || !token) {
-            console.error("Login failed: userData or token is missing.");
-            if (setIsLoading) setIsLoading(false); // Ensure loading is false on failed login
-            return;
-        }
-        setUser(userData)
-        setAccessToken(token)
-        localStorage.setItem('user', JSON.stringify(userData))
-        localStorage.setItem('accessToken', token)
-        if (setIsLoading) setIsLoading(false); // Set loading to false only after state is updated
-    }
+    }, [hasMounted, login, triggerSessionExpired]);
 
     // Function to update user data in state and localStorage
     const updateUser = (data: Partial<User>) => {

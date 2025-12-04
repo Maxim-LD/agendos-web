@@ -9,14 +9,16 @@ const api = {
     async request(
         url: string,
         options: RequestInit = {},
-        triggerSessionExpired?: TriggerSessionExpired 
+        triggerSessionExpired?: TriggerSessionExpired,
+        isAuthenticatedRequest: boolean = true // New parameter
     ) {
-        // Get token from localStorage for server-side compatibility
-        const token = localStorage.getItem('accessToken');
-
         const headers = new Headers(options.headers || {});
-        if (token) {
-            headers.set('Authorization', `Bearer ${token}`);
+        if (isAuthenticatedRequest) {
+            // Get token from localStorage for server-side compatibility
+            const token = localStorage.getItem('accessToken');
+            if (token) {
+                headers.set('Authorization', `Bearer ${token}`);
+            }
         }
         headers.set('Content-Type', 'application/json');
 

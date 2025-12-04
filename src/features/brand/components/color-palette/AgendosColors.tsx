@@ -5,6 +5,7 @@ const colors = [
   { name: "Vibrant Orange", hex: "#FF7A00" },
   { name: "Charcoal Black", hex: "#1E1E1E" },
   { name: "Soft Gray", hex: "#F8F9FA" },
+  { name: "Pure White", hex: "#FFFFFF" },
 ]
 
 export const AgendosColors = () => (

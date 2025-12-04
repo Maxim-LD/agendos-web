@@ -21,7 +21,7 @@ export function SettingsPageContent() {
   if (isLoading || !user) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-8 h-8 animate-spin text-electric-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -31,8 +31,10 @@ export function SettingsPageContent() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-charcoal-black">Settings</h1>
-          <p className="text-charcoal-black/60 mt-1">Manage your setup and preferences</p>
+          <h1 className="text-3xl font-bold">Settings</h1>
+          <p className="text-muted-foreground mt-1">
+            Manage your setup and preferences
+          </p>
         </div>
 
         {/* Settings Sections */}
@@ -56,21 +58,25 @@ export function SettingsPageContent() {
         >
           <Button
             variant="outline"
-            className="w-full justify-between bg-transparent"
+            className="w-full justify-between"
             onClick={() => handleFeatureClick("Help & Support")}
           >
             <span className="flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-charcoal-black/70" />
+              <HelpCircle className="w-5 h-5 text-muted-foreground" />
               Help & Support
             </span>
-            <span className="text-electric-blue hover:text-electric-blue/80 transition-colors">
+            <span className="text-primary hover:text-primary/80 transition-colors">
               <ChevronRight className="w-5 h-5" />
             </span>
           </Button>
         </motion.div>
       </div>
 
-      <ComingSoonModal open={comingSoonOpen} onOpenChange={setComingSoonOpen} featureName={selectedFeature} />
+      <ComingSoonModal
+        open={comingSoonOpen}
+        onOpenChange={setComingSoonOpen}
+        featureName={selectedFeature}
+      />
     </>
   )
 }

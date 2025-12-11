@@ -7,13 +7,19 @@ import { ComingSoonModal } from "@/components/ui/coming-soon-modal"
 import { Drawer } from "vaul"
 import { MobileMockup } from "@/features/landing/components/mobile-mockup"
 import { AgendosLogo } from "@/features/brand/components/logo/AgendosLogo"
-import { AgendosWordmark } from "@/features/brand/components/logo/AgendosWordmark"
 import { AgendosIcon } from "@/features/brand/components/logo/AgendosIcon"
+import { useAuth } from "@/providers"
+import { cn } from "@/lib/utils"
+import { LogOut } from "lucide-react"
 
 export default function LandingPage() {
   const [comingSoonOpen, setComingSoonOpen] = useState(false)
   const [selectedFeature, setSelectedFeature] = useState("")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
+  const { user, accessToken, logout } = useAuth() 
+
+  const isAuthenticated = !!(user && accessToken)
 
   const handleFeatureClick = (featureName: string) => {
     setSelectedFeature(featureName)
@@ -45,11 +51,54 @@ export default function LandingPage() {
                   Download
                 </a>
               </li>
-              <li>
-                <Link href="/auth/login">
-                  <Button className="bg-[#007AFF] hover:bg-[#0055CC] text-white rounded-lg px-6">Sign In</Button>
-                </Link>
-              </li>
+              {isAuthenticated ? (
+                <>
+                  <li className="relative">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label="User menu"
+                      onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </Button>
+                    {isProfileMenuOpen && (
+                      <>
+                        <div className="fixed inset-0 z-40" onClick={() => setIsProfileMenuOpen(false)} />
+                        <div className="absolute right-0 mt-2 w-25 bg-white rounded-md shadow-lg py-1">
+                          <Link
+                            href="/profile"
+                            className="block px-6 py-2 text-sm text-gray-700 hover:bg-blue-100"
+                            onClick={() => setIsProfileMenuOpen(false)}
+                          >
+                            Profile
+                          </Link>
+                          <div className="mt-auto border-t p-2">
+                            <Button
+                              variant="ghost"
+                              className={cn(
+                                "w-full justify-start gap-3 text-red-500 hover:bg-red-50 hover:text-red-600"
+                              )}
+                              onClick={() => {
+                                logout?.()
+                                setIsProfileMenuOpen(false)
+                              }}
+                            >
+                              Logout
+                            </Button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </li>
+                </>
+              ) : (
+                <li>
+                  <Link href="/auth/login">
+                    <Button className="bg-[#007AFF] hover:bg-[#0055CC] text-white rounded-lg px-6">Sign In</Button>
+                  </Link>
+                </li>
+              )}
             </ul>
             <Drawer.Root direction="left" open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <Drawer.Trigger asChild className="md:hidden">
@@ -60,12 +109,9 @@ export default function LandingPage() {
               </Drawer.Trigger>
               <Drawer.Portal>
                 <Drawer.Overlay className="fixed inset-0 bg-black/40" />
-                <Drawer.Content className="bg-white flex flex-col rounded-t-[10px] h-full w-[80%] max-w-sm mt-24 fixed bottom-0 left-0">
+                <Drawer.Content className="bg-white flex flex-col h-full w-[70%] max-w-[280px] fixed top-0 left-0 shadow-xl z-50">
                   <div className="p-4 bg-white flex-1 h-full">
                     <div className="max-w-md mx-auto">
-                      <Drawer.Title className="font-medium mb-4">
-                        Menu
-                      </Drawer.Title>
                       <ul className="flex flex-col gap-6 mt-6">
                         <li>
                           <a href="#features" onClick={() => setIsMenuOpen(false)} className="text-lg text-[#1E1E1E] font-semibold hover:text-[#007AFF] transition-colors">
@@ -82,18 +128,40 @@ export default function LandingPage() {
                             Download
                           </a>
                         </li>
-                        <li className="pt-4 border-t">
-                          <Link href="/auth/login">
-                            <Button className="w-full bg-[#007AFF] hover:bg-[#0055CC] text-white rounded-lg px-6">Sign In</Button>
-                          </Link>
-                        </li>
-                        <li>
-                          <Link href="/auth/signup">
-                            <Button variant="outline" className="w-full border-2 border-[#007AFF] text-[#007AFF] hover:bg-[#007AFF] hover:text-white rounded-lg px-6">
-                              Get Started
-                            </Button>
-                          </Link>
-                        </li>
+                        {isAuthenticated ? (
+                          <>
+                            <li className="pt-4 border-t">
+                              <Link href="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 text-lg text-[#1E1E1E] font-semibold hover:text-[#007AFF] transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                Profile
+                              </Link>
+                            </li>
+                            <li>
+                              <button onClick={() => {
+                                logout?.()
+                                setIsMenuOpen(false)
+                              }} className="flex items-center gap-3 text-lg text-[#1E1E1E] font-semibold hover:text-[#007AFF] transition-colors w-full text-left">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                                Logout
+                              </button>
+                            </li>
+                          </>
+                        ) : (
+                          <>
+                            <li className="pt-4 border-t">
+                              <Link href="/auth/login">
+                                <Button className="w-full bg-[#007AFF] hover:bg-[#0055CC] text-white rounded-lg px-6">Sign In</Button>
+                              </Link>
+                            </li>
+                            <li>
+                              <Link href="/auth/signup">
+                                <Button variant="outline" className="w-full border-2 border-[#007AFF] text-[#007AFF] hover:bg-[#007AFF] hover:text-white rounded-lg px-6">
+                                  Get Started
+                                </Button>
+                              </Link>
+                            </li>
+                          </>
+                        )}
                       </ul>
                     </div>
                   </div>

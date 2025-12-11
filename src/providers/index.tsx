@@ -31,7 +31,6 @@ function AuthProvider({ children }: { children: React.ReactNode}) {
         setHasMounted(true);
     }, []);
 
-    // Define login function first so it can be used in useEffect
     const login = useCallback((userData: User | null, token: string | null) => {
         if (!userData || !token) {
             console.error("Login failed: userData or token is missing.");
@@ -44,11 +43,11 @@ function AuthProvider({ children }: { children: React.ReactNode}) {
     }, []);
     
     const logout = useCallback(() => {
-        setUser(null);
-        setAccessToken(null);
         localStorage.removeItem('user');
         localStorage.removeItem('accessToken');
-        router.push('/auth/login');
+        setUser(null);
+        setAccessToken(null);
+        router.replace('/auth/login');
     }, [router]);
 
     const triggerSessionExpired = useCallback(() => {
@@ -86,7 +85,7 @@ function AuthProvider({ children }: { children: React.ReactNode}) {
         if (!hasMounted) return;
 
         const initializeAuth = async () => {
-            const storedToken = localStorage.getItem('accessToken');
+            const storedToken = localStorage.getItem('accessToken')
 
             // If we have a token, try to refresh the session
             if (storedToken) {
@@ -100,14 +99,14 @@ function AuthProvider({ children }: { children: React.ReactNode}) {
                         throw new Error('Refresh token failed');
                     }
                     const responseData = await response.json();
-                    if (!responseData.user || !responseData.token) {
+                    if (!responseData.data.user || !responseData.data.token) {
                         console.error("Refresh token returned invalid user data or token.");
                         throw new Error('Invalid refresh token response');
                     }
-                    login(responseData.user, responseData.token);
+                    login(responseData.data.user, responseData.data.token);
                 } catch (error) {
                     console.error("Session refresh failed, logging out.", error);
-                    triggerSessionExpired();
+                    logout();
                 } finally {
                     setIsLoading(false);
                 }

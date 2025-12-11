@@ -1,6 +1,5 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,17 +12,14 @@ interface EditProfileModalProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     onSave: () => void
-    user: any // Pass user directly to the component
+    user?: any // Pass user directly to the component
 }
 
 export function EditProfileModal({ open, onOpenChange, onSave, user }: EditProfileModalProps) {
     const {
-        fullname,
-        setFullname,
-        occupation,
-        setOccupation,
-        status,
-        setStatus,
+        fullname, setFullname,
+        occupation, setOccupation,
+        status, setStatus,
         isSaving,
         isUploading,
         previewImage,

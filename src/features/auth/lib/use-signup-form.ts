@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import api from "@/lib/api"
+import { useAuth } from "@/providers"
 
 export function useSignupForm() {
   const [formData, setFormData] = useState({
@@ -18,6 +19,8 @@ export function useSignupForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isPasswordFocused, setIsPasswordFocused] = useState(false)
+  const { login } = useAuth()
+
 
   const [passwordStrength, setPasswordStrength] = useState({
     length: false,
@@ -77,7 +80,8 @@ export function useSignupForm() {
           description: `Welcome to AGENDOS, ${result.data.fullname}!`,
           duration: 2000,
         })
-        // On success, navigate to the onboarding flow with the email as a query param
+        // On success, store the user in state, and navigate to the onboarding flow with the email as a query param
+        login(result.data.user, result.data.accessToken)
         router.push(`/onboarding?email=${formData.email}`)
       } else {
         setFormError(result.message || "Something went wrong. Please try again.")

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, FC } from "react"
+import { useState, useMemo, FC, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -48,7 +48,9 @@ export const OnboardingFlow: FC<OnboardingFlowProps> = ({ onFinish, email }) => 
 
   const handleNext = () => setStep(prev => Math.min(prev + 1, TOTAL_STEPS + 1))
   const handleBack = () => setStep(prev => Math.max(prev - 1, 1))
-  const handleSkip = () => handleNext()
+
+  const handleProfileSkip = () => setStep(3) // Skip to FirstTaskStep
+  const handleFirstTaskSkip = () => setStep(TOTAL_STEPS) // Skip to CompletionStep
 
   const handleComingSoon = (feature: string) => {
     setAdvanceOnClose(true)
@@ -59,13 +61,13 @@ export const OnboardingFlow: FC<OnboardingFlowProps> = ({ onFinish, email }) => 
   const renderStep = () => {
     switch (step) {
       case 1:
-        return <ProfileStep onNext={handleNext} onSkip={handleSkip} data={onboardingData} updateData={updateOnboardingData} />
+        return <ProfileStep onNext={handleNext} onSkip={handleProfileSkip} data={onboardingData} updateData={updateOnboardingData} />
       case 2:
         return (
           <CapacityStep onNext={handleNext} onBack={handleBack} data={onboardingData} updateData={updateOnboardingData} />
         )
       case 3:
-        return <FirstTaskStep onNext={handleNext} />
+        return <FirstTaskStep onNext={handleNext} onSkip={handleFirstTaskSkip} />
       case 4:
         return <CompletionStep onFinish={onFinish} />
       default:
@@ -157,9 +159,25 @@ interface ProfileStepProps {
 }
 
 const ProfileStep: FC<ProfileStepProps> = ({ onNext, onSkip, data, updateData }) => {
+  const [error, setError] = useState<string | null>(null)
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError(null) // Clear error on change
     updateData({ [e.target.name]: e.target.value })
   }
+
+  const handleSave = () => {
+    const { username, phone, occupation, date_of_birth, status } = data;
+    const profileFields = { username, phone, occupation, date_of_birth, status };
+    const isProfileEmpty = Object.values(profileFields).every(value => value === "" || value === null)
+
+    if (isProfileEmpty) {
+      setError("Please fill in at least one field, or skip for now.")
+      return
+    }
+    // Validation passed, proceed to the next step where data will be saved.
+    onNext()
+  };
 
   return (
     <div className="text-center">
@@ -191,9 +209,15 @@ const ProfileStep: FC<ProfileStepProps> = ({ onNext, onSkip, data, updateData })
           </div>
         </div>
       </div>
+      {error && (
+        <Alert variant="destructive" className="mt-6 text-left">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Button variant="outline" onClick={onSkip} className="w-full py-3">Skip for Now</Button>
-        <Button onClick={onNext} className="w-full bg-[#FF7A00] hover:bg-[#E66E00] text-white font-bold py-3">
+        <Button onClick={handleSave} className="w-full bg-[#FF7A00] hover:bg-[#E66E00] text-white font-bold py-3">
           Save & Continue
         </Button>
       </div>
@@ -300,9 +324,10 @@ const CapacityStep: FC<CapacityStepProps> = ({ onNext, onBack, data, updateData 
 
 interface FirstTaskStepProps {
   onNext: () => void;
+  onSkip: () => void;
 }
 
-const FirstTaskStep: FC<FirstTaskStepProps> = ({ onNext }) => {
+const FirstTaskStep: FC<FirstTaskStepProps> = ({ onNext, onSkip }) => {
   const [taskData, setTaskData] = useState({
     title: "",
     effort_estimate_minutes: "",
@@ -385,10 +410,15 @@ const FirstTaskStep: FC<FirstTaskStepProps> = ({ onNext }) => {
         </Alert>
       )}
 
-      <Button onClick={handleSave} className="w-full mt-8 bg-[#FF7A00] hover:bg-[#E66E00] text-white font-bold py-3" disabled={isSubmitting}>
-        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Add Task & Continue
-      </Button>
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Button variant="outline" onClick={onSkip} className="w-full py-3" disabled={isSubmitting}>
+          Skip for Now
+        </Button>
+        <Button onClick={handleSave} className="w-full bg-[#FF7A00] hover:bg-[#E66E00] text-white font-bold py-3" disabled={isSubmitting}>
+          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Add Task & Continue
+        </Button>
+      </div>
     </div>
   )
 }

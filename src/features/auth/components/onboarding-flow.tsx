@@ -9,7 +9,7 @@ import { Slider } from "@/components/ui/slider"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ComingSoonModal } from "@/components/ui/coming-soon-modal"
-import { Check, Info, Zap, Coffee, Brain, AlertCircle, Loader2 } from "lucide-react"
+import { Check, Info, AlertCircle, Loader2, ListTodo, Flame, Clock } from "lucide-react"
 import api from "@/lib/api"
 
 const TOTAL_STEPS = 4
@@ -85,17 +85,18 @@ export const OnboardingFlow: FC<OnboardingFlowProps> = ({ onFinish, email }) => 
       <div className="fixed inset-0 bg-gradient-to-br from-[#0A1628] to-[#1E3A52] z-30" />
       {/* Dimming overlay */}
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" />
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <motion.div
-          key={step}
-          variants={modalVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="w-full max-w-md bg-white rounded-xl shadow-2xl border border-gray-200"
-        >
-          <div className="p-6 sm:p-8">
+      <div className="fixed inset-0 z-50 overflow-y-auto">
+        <div className="flex min-h-full items-center justify-center p-4">
+          <motion.div
+            key={step}
+            variants={modalVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="w-full max-w-4xl bg-white rounded-xl shadow-2xl border border-gray-200 flex flex-col md:flex-row overflow-hidden"
+          >
+            <div className="flex-1 p-6 sm:p-8">
             <ProgressIndicator currentStep={step} totalSteps={TOTAL_STEPS} />
             <AnimatePresence mode="wait">
               <motion.div
@@ -109,10 +110,22 @@ export const OnboardingFlow: FC<OnboardingFlowProps> = ({ onFinish, email }) => 
               </motion.div>
             </AnimatePresence>
           </div>
+          <div className="hidden md:flex w-1/2 bg-teal-50 items-center justify-center p-8 border-l border-gray-100">
+            <div className="text-center">
+              <div className="w-24 h-24 bg-white rounded-full shadow-sm flex items-center justify-center mx-auto mb-6">
+                <ListTodo className="w-12 h-12 text-[#00BFA6]" />
+              </div>
+              <h3 className="text-xl font-bold text-charcoal-black mb-2">Stay Organized</h3>
+              <p className="text-sm text-charcoal-black/60">
+                Streamline your workflow and track your progress effortlessly.
+              </p>
+            </div>
+          </div>
         </motion.div>
+        </div>
       </div>
       <ComingSoonModal 
-        open={comingSoonOpen} 
+        open={comingSoonOpen}
         onOpenChange={(isOpen) => {
           setComingSoonOpen(isOpen)
           if (!isOpen && advanceOnClose) {
@@ -120,7 +133,7 @@ export const OnboardingFlow: FC<OnboardingFlowProps> = ({ onFinish, email }) => 
             setAdvanceOnClose(false)
           }
         }} 
-        featureName={comingSoonFeature} />
+        featureName={comingSoonFeature}/>
     </>
   )
 }
@@ -144,6 +157,8 @@ function ProgressIndicator({ currentStep, totalSteps }: { currentStep: number; t
     </div>
   )
 }
+
+
 
 interface ProfileStepProps {
   onNext: () => void;
@@ -330,22 +345,26 @@ interface FirstTaskStepProps {
 const FirstTaskStep: FC<FirstTaskStepProps> = ({ onNext, onSkip }) => {
   const [taskData, setTaskData] = useState({
     title: "",
-    effort_estimate_minutes: "",
-    energy_required: "medium" as "low" | "medium" | "high",
+    description: "",
+    urgency: "medium" as "low" | "medium" | "high",
+    due_date: "",
   })
-  const [energy, setEnergy] = useState<"low" | "medium" | "high">("medium")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTaskData(prev => ({ ...prev, [e.target.name]: e.target.value }))
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target
+    setTaskData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+    }))
   }
 
   const handleSave = async () => {
     setIsSubmitting(true)
     setError(null)
     try {
-      console.log("Submitting task data:", { ...taskData, energy_required: energy })
+      console.log("Submitting task data:", taskData)
       await new Promise(resolve => setTimeout(resolve, 1500))
       onNext()
     } catch (err) {
@@ -356,10 +375,10 @@ const FirstTaskStep: FC<FirstTaskStepProps> = ({ onNext, onSkip }) => {
     }
   }
 
-  const energyLevels = {
-    low: { icon: Coffee, label: "Low", description: "Calm, easy tasks", color: "text-blue-500" },
-    medium: { icon: Zap, label: "Medium", description: "Standard focus", color: "text-yellow-500" },
-    high: { icon: Brain, label: "High", description: "Deep, focused work", color: "text-red-500" },
+  const urgencyLevels = {
+    low: { icon: Clock, label: "Flexible", description: "No strict deadline", color: "text-teal-500" },
+    medium: { icon: AlertCircle, label: "Upcoming", description: "Due soon", color: "text-orange-500" },
+    high: { icon: Flame, label: "Critical", description: "Immediate attention", color: "text-rose-500" },
   }
 
   return (
@@ -373,23 +392,27 @@ const FirstTaskStep: FC<FirstTaskStepProps> = ({ onNext, onSkip }) => {
           <Input id="title" name="title" value={taskData.title} onChange={handleChange} placeholder="e.g., Draft project proposal" className="placeholder:text-charcoal-black/40" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="effort">Effort Estimate (minutes)</Label>
-          <Input id="effort" name="effort_estimate_minutes" type="number" value={taskData.effort_estimate_minutes} onChange={handleChange} placeholder="e.g., 60" className="placeholder:text-charcoal-black/40" />
+          <Label htmlFor="description">Description (Optional)</Label>
+          <Input id="description" name="description" value={taskData.description} onChange={handleChange} placeholder="Add details..." className="placeholder:text-charcoal-black/40" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="due_date">Due Date</Label>
+          <Input id="due_date" name="due_date" type="date" value={taskData.due_date} onChange={handleChange} className="placeholder:text-charcoal-black/40" />
         </div>
         <div className="space-y-3">
-          <Label>Energy Required</Label>
+          <Label>Urgency</Label>
           <div className="grid grid-cols-3 gap-2">
-            {Object.entries(energyLevels).map(([key, { icon: Icon, label, color }]) => (
+            {Object.entries(urgencyLevels).map(([key, { icon: Icon, label, color }]) => (
               <button
                 key={key}
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  setEnergy(key as "low" | "medium" | "high");
+                  setTaskData(prev => ({ ...prev, urgency: key as "low" | "medium" | "high" }));
                 }}
                 className={`p-3 border rounded-lg flex flex-col items-center justify-center transition-all duration-200 ${
-                  energy === key ? "border-[#00BFA6] bg-teal-50/50 ring-2 ring-[#00BFA6]" : "border-gray-200 hover:border-gray-300"
+                  taskData.urgency === key ? "border-[#00BFA6] bg-teal-50/50 ring-2 ring-[#00BFA6]" : "border-gray-200 hover:border-gray-300"
                 }`}
               >
                 <Icon className={`w-6 h-6 mb-1 ${color}`} />
@@ -398,7 +421,7 @@ const FirstTaskStep: FC<FirstTaskStepProps> = ({ onNext, onSkip }) => {
             ))}
           </div>
           <p className="text-xs text-center text-charcoal-black/60 h-4">
-            {energyLevels[energy].description}
+            {urgencyLevels[taskData.urgency].description}
           </p>
         </div>
       </div>

@@ -13,9 +13,10 @@ export function BrandPageContent() {
   const [progress, setProgress] = useState(85); // State for the progress slider
 
   return (
-    <div className="space-y-16">
-      <h1 className="text-3xl md:text-4xl font-extrabold text-center text-[#1E1E1E] font-montserrat">AGENDOS Brand System</h1>
-      <p className="text-base md:text-lg text-center text-[#6B7280] font-montserrat">Empowering personal productivity and lifestyle management</p>
+    <div className="w-full flex justify-center px-4 py-6">
+      <div className="w-full max-w-5xl space-y-16">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-center text-[#1E1E1E] font-montserrat">AGENDOS Brand System</h1>
+        <p className="text-base md:text-lg text-center text-[#6B7280] font-montserrat">Empowering personal productivity and lifestyle management</p>
 
       {/* Progress Slider for interactive demo */}
       <div className="max-w-md mx-auto p-6 border rounded-lg bg-gray-50">
@@ -65,9 +66,10 @@ export function BrandPageContent() {
         <AgendosIcon progress={progress} className="mx-auto w-24 h-24" />
       </section>
 
-      <AgendosColors />
-      <AgendosTypography />
-      <AgendosPersonality />
+        <AgendosColors />
+        <AgendosTypography />
+        <AgendosPersonality />
+      </div>
     </div>
   )
 }

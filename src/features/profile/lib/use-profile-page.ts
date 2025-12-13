@@ -45,12 +45,7 @@ export function useProfilePage() {
       title: "Security",
       icon: Shield,
       items: [{ type: "navigation", label: "Change Password", action: () => handleFeatureClick("Change Password") }],
-    },
-    {
-      title: "Notifications",
-      icon: Bell,
-      items: [{ type: "toggle", label: "Email Notifications", action: () => handleFeatureClick("Email Notifications Toggle") }],
-    },
+    }
   ]
 
   return {

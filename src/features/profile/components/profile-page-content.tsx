@@ -17,7 +17,6 @@ export function ProfilePageContent() {
     editProfileOpen,
     profileSections,
     setComingSoonOpen,
-    setSelectedFeature,
     setEditProfileOpen,
     handleFeatureClick,
   } = useProfilePage()
@@ -32,12 +31,13 @@ export function ProfilePageContent() {
 
   return (
     <>
-      <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-charcoal-black">Profile</h1>
-          <p className="text-charcoal-black/60 mt-1">Manage your account</p>
-        </div>
+      <div className="container mx-auto max-w-5xl px-4 py-6">
+        <div className="space-y-6">
+          {/* Header */}
+          <div>
+            <h1 className="text-3xl font-bold text-charcoal-black">Profile</h1>
+            <p className="text-charcoal-black/60 mt-1">Manage your account</p>
+          </div>
 
         {/* Profile Card */}
         <ProfileHeader user={user} onEditClick={() => setEditProfileOpen(true)} />
@@ -47,9 +47,10 @@ export function ProfilePageContent() {
 
         {/* Profile Settings Sections */}
         <div className="space-y-4">
-          {profileSections.map((section, index) => (
-            <SettingsSection key={section.title} section={section} index={index} />
-          ))}
+            {profileSections.map((section, index) => (
+              <SettingsSection key={section.title} section={section} index={index} />
+            ))}
+          </div>
         </div>
       </div>
       <ComingSoonModal open={comingSoonOpen} onOpenChange={setComingSoonOpen} featureName={selectedFeature} />

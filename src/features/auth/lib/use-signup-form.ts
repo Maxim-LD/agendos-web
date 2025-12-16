@@ -87,7 +87,6 @@ export function useSignupForm() {
         setFormError(result.message || "Something went wrong. Please try again.")
       }
     } catch (error) {
-      console.error("Sign up error:", error)
       setFormError("Network error. Please try again.")
     } finally {
       setIsLoading(false)

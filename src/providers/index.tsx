@@ -5,6 +5,7 @@ import { ThemeProvider as NextThemesProvider, type ThemeProviderProps } from "ne
 import { useRouter } from "next/navigation"
 import { createContext, useContext, useState, useEffect, useCallback } from "react"
 import { User } from "@/types/user"
+import { ToastProvider } from "./toast-provider"
 
 interface AuthContextType {
     user: User | null
@@ -14,6 +15,7 @@ interface AuthContextType {
     triggerSessionExpired: () => void
     updateUser: (data: Partial<User>) => void
     isLoading: boolean
+    isSessionExpired: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -138,6 +140,7 @@ function AuthProvider({ children }: { children: React.ReactNode}) {
         triggerSessionExpired,
         isLoading,
         updateUser,
+        isSessionExpired,
     }}>{children}{isSessionExpired && hasMounted && <SessionExpiredModal />}
     </AuthContext.Provider>
 }
@@ -154,7 +157,9 @@ export function useAuth() {
 export function Providers({ children, ...props }: ThemeProviderProps) {
   return (
     <NextThemesProvider {...props}>
-      <AuthProvider>{children}</AuthProvider>
+      <AuthProvider>
+        <ToastProvider>{children}</ToastProvider>
+      </AuthProvider>
     </NextThemesProvider>
   )
 }

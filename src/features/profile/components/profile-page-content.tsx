@@ -1,14 +1,15 @@
 "use client"
 
-import { Loader2 } from "lucide-react"
 import { ComingSoonModal } from "@/components/ui/coming-soon-modal"
+import { Skeleton } from "@/components/ui/skeleton"
 import { EditProfileModal } from "@/features/profile/components/edit-profile-modal"
 import { ProfileHeader } from "@/features/profile/components/profile-header"
 import { VerificationSection } from "@/features/profile/components/verification-section"
 import { SettingsSection } from "@/features/profile/components/settings-section"
 import { useProfilePage } from "@/features/profile/lib/use-profile-page"
+import { withAuth } from "@/lib/auth-guard"
 
-export function ProfilePageContent() {
+function ProfilePageContentBase() {
   const {
     user,
     isLoading,
@@ -23,15 +24,32 @@ export function ProfilePageContent() {
 
   if (isLoading || !user) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-8 h-8 animate-spin text-electric-blue" />
+      <div className="container mx-auto max-w-5xl px-4 py-6">
+        <div className="space-y-6">
+          <div>
+            <Skeleton className="h-9 w-32" />
+            <Skeleton className="mt-2 h-5 w-48" />
+          </div>
+          <div className="flex items-center gap-6 rounded-xl border p-6">
+            <Skeleton className="h-24 w-24 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-8 w-48" />
+              <Skeleton className="h-5 w-32" />
+            </div>
+          </div>
+          <div className="space-y-4">
+            {[1, 2].map((i) => (
+              <Skeleton key={i} className="h-48 w-full rounded-xl" />
+            ))}
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
     <>
-      <div className="container mx-auto max-w-5xl px-4 py-6">
+    <div className="container mx-auto max-w-5xl px-1 py-0.5">
         <div className="space-y-6">
           {/* Header */}
           <div>
@@ -58,3 +76,5 @@ export function ProfilePageContent() {
     </>
   )
 }
+
+export const ProfilePageContent = withAuth(ProfilePageContentBase)

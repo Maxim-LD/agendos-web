@@ -7,7 +7,7 @@ import { AgendosWordmark } from "@/features/brand/components/logo/AgendosWordmar
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/providers"
-import { LogOut, Menu, User } from "lucide-react"
+import { LogOut, Menu, User, Mail } from "lucide-react"
 import { navItems } from "./constants"
 import { useSidebar } from "./use-sidebar"
 
@@ -32,19 +32,27 @@ export function Sidebar() {
             <AgendosWordmark href="/" className="text-xl" />
           </div>
         </div>
-        <div className="relative group">
-          <Button variant="ghost" size="icon">
-            <User className="h-5 w-5" />
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" className="relative" title="Messages">
+            <Mail className="h-5 w-5" />
+            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+              5
+            </span>
           </Button>
-          <div className="absolute right-0 top-full hidden w-48 flex-col rounded-md border bg-white py-1 shadow-lg group-hover:flex">
-            <Link href="/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-              <User className="h-4 w-4" />
-              Profile
-            </Link>
-            <button onClick={logout} className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-500 hover:bg-red-50">
-              <LogOut className="h-4 w-4" />
-              Log Out
-            </button>
+          <div className="relative group">
+            <Button variant="ghost" size="icon">
+              <User className="h-5 w-5" />
+            </Button>
+            <div className="absolute right-0 top-full hidden w-48 flex-col rounded-md border bg-white py-1 shadow-lg group-hover:flex">
+              <Link href="/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <User className="h-4 w-4" />
+                Profile
+              </Link>
+              <button onClick={logout} className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-500 hover:bg-red-50">
+                <LogOut className="h-4 w-4" />
+                Log Out
+              </button>
+            </div>
           </div>
         </div>
       </header>

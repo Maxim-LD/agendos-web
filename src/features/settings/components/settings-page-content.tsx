@@ -1,13 +1,15 @@
 "use client"
 
-import { Loader2, HelpCircle, ChevronRight } from "lucide-react"
+import { HelpCircle, ChevronRight } from "lucide-react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import { ComingSoonModal } from "@/components/ui/coming-soon-modal"
 import { useSettingsPage } from "@/features/settings/lib/use-settings-page"
 import { SettingsSectionComponent } from "@/features/settings/components/settings-section"
+import { withAuth } from "@/lib/auth-guard"
 
-export function SettingsPageContent() {
+function SettingsPageContentBase() {
   const {
     user,
     isLoading,
@@ -20,14 +22,24 @@ export function SettingsPageContent() {
 
   if (isLoading || !user) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="container mx-auto max-w-5xl px-4 py-6">
+        <div className="space-y-6">
+          <div>
+            <Skeleton className="h-9 w-32" />
+            <Skeleton className="mt-2 h-5 w-64" />
+          </div>
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-32 w-full rounded-xl" />
+            ))}
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <>
+    <div className="container mx-auto max-w-5xl px-1 py-0.5">
       <div className="space-y-6">
         {/* Header */}
         <div>
@@ -77,6 +89,8 @@ export function SettingsPageContent() {
         onOpenChange={setComingSoonOpen}
         featureName={selectedFeature}
       />
-    </>
+    </div>
   )
 }
+
+export const SettingsPageContent = withAuth(SettingsPageContentBase)

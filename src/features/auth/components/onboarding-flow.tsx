@@ -38,8 +38,7 @@ export const OnboardingFlow: FC<OnboardingFlowProps> = ({ onFinish, email }) => 
     occupation: "",
     date_of_birth: "",
     status: "",
-    // Capacity Step
-    maximum_daily_capacity: 8,
+    maximum_daily_capacity: 8, // Capacity Step
   })
 
   const updateOnboardingData = (data: Partial<typeof onboardingData>) => {
@@ -67,8 +66,6 @@ export const OnboardingFlow: FC<OnboardingFlowProps> = ({ onFinish, email }) => 
           <CapacityStep onNext={handleNext} onBack={handleBack} data={onboardingData} updateData={updateOnboardingData} />
         )
       case 3:
-        return <FirstTaskStep onNext={handleNext} onSkip={handleFirstTaskSkip} />
-      case 4:
         return <CompletionStep onFinish={onFinish} />
       default:
         return null
@@ -337,114 +334,114 @@ const CapacityStep: FC<CapacityStepProps> = ({ onNext, onBack, data, updateData 
   )
 }
 
-interface FirstTaskStepProps {
-  onNext: () => void;
-  onSkip: () => void;
-}
+// interface FirstTaskStepProps {
+//   onNext: () => void;
+//   onSkip: () => void;
+// }
 
-const FirstTaskStep: FC<FirstTaskStepProps> = ({ onNext, onSkip }) => {
-  const [taskData, setTaskData] = useState({
-    title: "",
-    description: "",
-    urgency: "medium" as "low" | "medium" | "high",
-    due_date: "",
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+// const FirstTaskStep: FC<FirstTaskStepProps> = ({ onNext, onSkip }) => {
+//   const [taskData, setTaskData] = useState({
+//     title: "",
+//     description: "",
+//     urgency: "medium" as "low" | "medium" | "high",
+//     due_date: "",
+//   })
+//   const [isSubmitting, setIsSubmitting] = useState(false)
+//   const [error, setError] = useState<string | null>(null)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target
-    setTaskData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-    }))
-  }
+//   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+//     const { name, value, type } = e.target
+//     setTaskData(prev => ({
+//       ...prev,
+//       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+//     }))
+//   }
 
-  const handleSave = async () => {
-    setIsSubmitting(true)
-    setError(null)
-    try {
-      console.log("Submitting task data:", taskData)
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      onNext()
-    } catch (err) {
-      setError("Failed to create task. Please try again.")
-      console.error(err)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+//   const handleSave = async () => {
+//     setIsSubmitting(true)
+//     setError(null)
+//     try {
+//       console.log("Submitting task data:", taskData)
+//       await new Promise(resolve => setTimeout(resolve, 1500))
+//       onNext()
+//     } catch (err) {
+//       setError("Failed to create task. Please try again.")
+//       console.error(err)
+//     } finally {
+//       setIsSubmitting(false)
+//     }
+//   }
 
-  const urgencyLevels = {
-    low: { icon: Clock, label: "Flexible", description: "No strict deadline", color: "text-teal-500" },
-    medium: { icon: AlertCircle, label: "Upcoming", description: "Due soon", color: "text-orange-500" },
-    high: { icon: Flame, label: "Critical", description: "Immediate attention", color: "text-rose-500" },
-  }
+//   const urgencyLevels = {
+//     low: { icon: Clock, label: "Flexible", description: "No strict deadline", color: "text-teal-500" },
+//     medium: { icon: AlertCircle, label: "Upcoming", description: "Due soon", color: "text-orange-500" },
+//     high: { icon: Flame, label: "Critical", description: "Immediate attention", color: "text-rose-500" },
+//   }
 
-  return (
-    <div className="text-center">
-      <h2 className="text-2xl font-bold text-charcoal-black mb-2">Define Your First Win</h2>
-      <p className="text-charcoal-black/60 mb-8">Create your first task to get started.</p>
+//   return (
+//     <div className="text-center">
+//       <h2 className="text-2xl font-bold text-charcoal-black mb-2">Define Your First Win</h2>
+//       <p className="text-charcoal-black/60 mb-8">Create your first task to get started.</p>
 
-      <div className="space-y-4 text-left">
-        <div className="space-y-2">
-          <Label htmlFor="title">Task Title</Label>
-          <Input id="title" name="title" value={taskData.title} onChange={handleChange} placeholder="e.g., Draft project proposal" className="placeholder:text-charcoal-black/40" />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="description">Description (Optional)</Label>
-          <Input id="description" name="description" value={taskData.description} onChange={handleChange} placeholder="Add details..." className="placeholder:text-charcoal-black/40" />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="due_date">Due Date</Label>
-          <Input id="due_date" name="due_date" type="date" value={taskData.due_date} onChange={handleChange} className="placeholder:text-charcoal-black/40" />
-        </div>
-        <div className="space-y-3">
-          <Label>Urgency</Label>
-          <div className="grid grid-cols-3 gap-2">
-            {Object.entries(urgencyLevels).map(([key, { icon: Icon, label, color }]) => (
-              <button
-                key={key}
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setTaskData(prev => ({ ...prev, urgency: key as "low" | "medium" | "high" }));
-                }}
-                className={`p-3 border rounded-lg flex flex-col items-center justify-center transition-all duration-200 ${
-                  taskData.urgency === key ? "border-[#00BFA6] bg-teal-50/50 ring-2 ring-[#00BFA6]" : "border-gray-200 hover:border-gray-300"
-                }`}
-              >
-                <Icon className={`w-6 h-6 mb-1 ${color}`} />
-                <span className="text-sm font-medium">{label}</span>
-              </button>
-            ))}
-          </div>
-          <p className="text-xs text-center text-charcoal-black/60 h-4">
-            {urgencyLevels[taskData.urgency].description}
-          </p>
-        </div>
-      </div>
+//       <div className="space-y-4 text-left">
+//         <div className="space-y-2">
+//           <Label htmlFor="title">Task Title</Label>
+//           <Input id="title" name="title" value={taskData.title} onChange={handleChange} placeholder="e.g., Draft project proposal" className="placeholder:text-charcoal-black/40" />
+//         </div>
+//         <div className="space-y-2">
+//           <Label htmlFor="description">Description (Optional)</Label>
+//           <Input id="description" name="description" value={taskData.description} onChange={handleChange} placeholder="Add details..." className="placeholder:text-charcoal-black/40" />
+//         </div>
+//         <div className="space-y-2">
+//           <Label htmlFor="due_date">Due Date</Label>
+//           <Input id="due_date" name="due_date" type="date" value={taskData.due_date} onChange={handleChange} className="placeholder:text-charcoal-black/40" />
+//         </div>
+//         <div className="space-y-3">
+//           <Label>Urgency</Label>
+//           <div className="grid grid-cols-3 gap-2">
+//             {Object.entries(urgencyLevels).map(([key, { icon: Icon, label, color }]) => (
+//               <button
+//                 key={key}
+//                 type="button"
+//                 onClick={(e) => {
+//                   e.preventDefault();
+//                   e.stopPropagation();
+//                   setTaskData(prev => ({ ...prev, urgency: key as "low" | "medium" | "high" }));
+//                 }}
+//                 className={`p-3 border rounded-lg flex flex-col items-center justify-center transition-all duration-200 ${
+//                   taskData.urgency === key ? "border-[#00BFA6] bg-teal-50/50 ring-2 ring-[#00BFA6]" : "border-gray-200 hover:border-gray-300"
+//                 }`}
+//               >
+//                 <Icon className={`w-6 h-6 mb-1 ${color}`} />
+//                 <span className="text-sm font-medium">{label}</span>
+//               </button>
+//             ))}
+//           </div>
+//           <p className="text-xs text-center text-charcoal-black/60 h-4">
+//             {urgencyLevels[taskData.urgency].description}
+//           </p>
+//         </div>
+//       </div>
 
-      {error && (
-        <Alert variant="destructive" className="mt-4 text-left">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+//       {error && (
+//         <Alert variant="destructive" className="mt-4 text-left">
+//           <AlertCircle className="h-4 w-4" />
+//           <AlertDescription>{error}</AlertDescription>
+//         </Alert>
+//       )}
 
-      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Button variant="outline" onClick={onSkip} className="w-full py-3" disabled={isSubmitting}>
-          Skip for Now
-        </Button>
-        <Button onClick={handleSave} className="w-full bg-[#FF7A00] hover:bg-[#E66E00] text-white font-bold py-3" disabled={isSubmitting}>
-          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Add Task & Continue
-        </Button>
-      </div>
-    </div>
-  )
-}
+//       <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+//         <Button variant="outline" onClick={onSkip} className="w-full py-3" disabled={isSubmitting}>
+//           Skip for Now
+//         </Button>
+//         <Button onClick={handleSave} className="w-full bg-[#FF7A00] hover:bg-[#E66E00] text-white font-bold py-3" disabled={isSubmitting}>
+//           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+//           Add Task & Continue
+//         </Button>
+//       </div>
+//     </div>
+//   )
+// }
 
 interface CompletionStepProps {
   onFinish: () => void;

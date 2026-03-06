@@ -6,11 +6,12 @@ import { useRouter } from "next/navigation"
 import { createContext, useContext, useState, useEffect, useCallback } from "react"
 import { User } from "@/types/user"
 import { ToastProvider } from "./toast-provider"
+import api from "@/lib/api";
 
 interface AuthContextType {
     user: User | null
     accessToken: string | null
-    login: (userData: User | null, token: string | null, setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>) => void 
+    login: (userData: User | null, token: string | null, setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>) => void
     logout?: () => void
     triggerSessionExpired: () => void
     updateUser: (data: Partial<User>) => void
@@ -20,14 +21,15 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-function AuthProvider({ children }: { children: React.ReactNode}) {
+function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null)
     const [accessToken, setAccessToken] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [isSessionExpired, setIsSessionExpired] = useState(false)
     const [hasMounted, setHasMounted] = useState(false);
     const router = useRouter()
-    
+    const initialized = React.useRef(false)
+
     // Set hasMounted flag to prevent hydration mismatch
     useEffect(() => {
         setHasMounted(true);
@@ -43,7 +45,7 @@ function AuthProvider({ children }: { children: React.ReactNode}) {
         localStorage.setItem('user', JSON.stringify(userData));
         localStorage.setItem('accessToken', token);
     }, []);
-    
+
     const logout = useCallback(() => {
         localStorage.removeItem('user');
         localStorage.removeItem('accessToken');
@@ -85,41 +87,39 @@ function AuthProvider({ children }: { children: React.ReactNode}) {
     // Initialize auth on mount only
     useEffect(() => {
         if (!hasMounted) return;
+        if (initialized.current) return;
 
         const initializeAuth = async () => {
             const storedToken = localStorage.getItem('accessToken')
+            const storedUser = localStorage.getItem('user')
 
-            // If we have a token, try to refresh the session
+            // If we have a token, restore session optimistically
             if (storedToken) {
-                try {
-                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh-token`,
-                        { method: 'POST',
-                            credentials: 'include'
-                        } 
-                    );
-                    if (!response.ok) {
-                        throw new Error('Refresh token failed');
+                initialized.current = true;
+
+                // Optimistically log in to prevent flashing
+                if (storedUser) {
+                    try {
+                        setUser(JSON.parse(storedUser));
+                        setAccessToken(storedToken);
+                    } catch (e) {
+                        console.error("Failed to parse stored user", e)
                     }
-                    const responseData = await response.json();
-                    if (!responseData.data.user || !responseData.data.token) {
-                        console.error("Refresh token returned invalid user data or token.");
-                        throw new Error('Invalid refresh token response');
-                    }
-                    login(responseData.data.user, responseData.data.token);
-                } catch (error) {
-                    console.error("Session refresh failed, logging out.", error);
-                    logout();
-                } finally {
-                    setIsLoading(false);
                 }
-            } else {
-                // If there's no token at all, we are not logged in.
-                setIsLoading(false);
             }
+
+            setIsLoading(false);
         };
 
         initializeAuth();
-    }, [hasMounted, login, triggerSessionExpired]);
+    }, [hasMounted]);
+
+    // Listen for interceptor auth failures
+    useEffect(() => {
+        const handleSessionExpired = () => triggerSessionExpired();
+        window.addEventListener('sessionExpired', handleSessionExpired);
+        return () => window.removeEventListener('sessionExpired', handleSessionExpired);
+    }, [triggerSessionExpired]);
 
     // Function to update user data in state and localStorage
     const updateUser = (data: Partial<User>) => {
@@ -155,11 +155,11 @@ export function useAuth() {
 
 
 export function Providers({ children, ...props }: ThemeProviderProps) {
-  return (
-    <NextThemesProvider {...props}>
-      <AuthProvider>
-        <ToastProvider>{children}</ToastProvider>
-      </AuthProvider>
-    </NextThemesProvider>
-  )
+    return (
+        <NextThemesProvider {...props}>
+            <AuthProvider>
+                <ToastProvider>{children}</ToastProvider>
+            </AuthProvider>
+        </NextThemesProvider>
+    )
 }

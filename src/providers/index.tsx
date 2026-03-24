@@ -50,6 +50,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     const logout = useCallback(() => {
         tokenManager.setToken(null);
         localStorage.removeItem('user');
+        localStorage.removeItem('tasks_cache');
         setUser(null);
         setAccessToken(null);
         router.replace('/auth/login');
@@ -61,6 +62,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         setAccessToken(null);
         tokenManager.setToken(null);
         localStorage.removeItem('user');
+        localStorage.removeItem('tasks_cache');
         setIsSessionExpired(true);
     }, []);
 

@@ -1,5 +1,5 @@
 import type React from "react"
-import { Montserrat } from "next/font/google";
+import { Montserrat, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import { Toaster } from "sonner"
@@ -11,14 +11,19 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
 });
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
-}>) { 
+}>) {
   return (
     <html lang='en'>
-      <body className={`${montserrat.variable} font-sans`}>
+      <body className={`${inter.variable} ${montserrat.variable} font-sans antialiased`}>
         <Suspense fallback={null}>
           <Providers>
             {children}

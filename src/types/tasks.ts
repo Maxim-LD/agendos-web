@@ -1,4 +1,4 @@
-export type EnergyRequired = "low" | "medium" | "high";
+export type EnergyRequired = "light" | "moderate" | "intense";
 export type TaskStatus = "not_started" | "ongoing" | "completed";
 export type ProgressInterval = "once" | "daily" | "weekly" | "monthly";
 export type Urgency = "low" | "medium" | "high";

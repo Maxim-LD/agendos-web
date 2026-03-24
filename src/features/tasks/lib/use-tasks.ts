@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { Task } from "@/types/tasks"
 import api from "@/lib/api"
 import { useAuth } from "@/providers"
@@ -40,7 +40,7 @@ export function useTasks() {
         due_date: "",
         reminders: false,
         effort_estimate_minutes: 0,
-        energy_required: "medium",
+        energy_required: "moderate",
         progress_interval: "once",
         scheduled_time: "",
     })
@@ -112,11 +112,13 @@ export function useTasks() {
         }
     }, [accessToken, addToast])
 
+    const fetchingRef = useRef(false);
+
     useEffect(() => {
-        // Prevent double-fetch in React StrictMode if already loading or if tasks exist
-        let mounted = true;
-        if (mounted) fetchTasks(false);
-        return () => { mounted = false; }
+        if (fetchingRef.current) return;
+        fetchingRef.current = true;
+
+        fetchTasks(false);
     }, [fetchTasks])
 
     const validateForm = () => {
@@ -189,7 +191,7 @@ export function useTasks() {
                 return newTasks
             })
             setIsCreating(false)
-            setNewTask({ title: "", description: "", urgency: "medium", due_date: "", reminders: false, effort_estimate_minutes: 0, energy_required: "medium", progress_interval: "once", scheduled_time: "" })
+            setNewTask({ title: "", description: "", urgency: "medium", due_date: "", reminders: false, effort_estimate_minutes: 0, energy_required: "moderate", progress_interval: "once", scheduled_time: "" })
             addToast("Task created successfully", "success")
 
             setIsSubmitting(false)

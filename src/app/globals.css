@@ -2,46 +2,70 @@
 @import "tw-animate-css";
 
 :root {
-  /* AGENDOS Brand Colors */
-  --electric-blue: #007aff;
-  --vibrant-orange: #ff7a00;
-  --charcoal-black: #1e1e1e;
-  --light-gray: #f5f5f5;
+  /* AGENDOS Brand Colors (Zinc & Indigo Calm Palette) */
+  --brand-primary: #4f46e5;
+  /* Indigo 600 */
+  --brand-primary-dark: #3730a3;
+  /* Indigo 800 */
+  --brand-secondary: #ea580c;
+  /* Subdued Orange / Terracotta */
+  --brand-secondary-dark: #c2410c;
+  /* Darker Terracotta */
+  --charcoal-black: #18181b;
+  /* Zinc 900 */
+  --light-gray: #fafafa;
+  /* Zinc 50 */
   --pure-white: #ffffff;
 
-  --background: oklch(1 0 0);
+  --background: oklch(0.985 0 0);
+  /* zinc-50 */
   --foreground: oklch(0.145 0 0);
+  /* zinc-950 */
   --card: oklch(1 0 0);
+  /* white */
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+
+  /* Primary matches Indigo */
+  --primary: oklch(0.511 0.262 276.966);
+  /* Indigo-600 */
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
+
+  /* Secondary matches Zinc-100 */
+  --secondary: oklch(0.968 0 0);
+  --secondary-foreground: oklch(0.145 0 0);
+
+  --muted: oklch(0.968 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  /* Zinc-500 */
+  --accent: oklch(0.968 0 0);
+  --accent-foreground: oklch(0.145 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
+  /* red-500 */
+  --destructive-foreground: oklch(0.985 0 0);
+
   --border: oklch(0.922 0 0);
+  /* Zinc-200 */
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
+  --ring: oklch(0.511 0.262 276.966);
+  /* ring matches primary */
+
+  --chart-1: oklch(0.511 0.262 276.966);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
   --radius: 0.625rem;
+
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary: oklch(0.511 0.262 276.966);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-accent: oklch(0.968 0 0);
+  --sidebar-accent-foreground: oklch(0.145 0 0);
   --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-ring: oklch(0.511 0.262 276.966);
 }
 
 .dark {
@@ -80,8 +104,17 @@
 }
 
 @theme inline {
-  /* Using only Montserrat for all text */
-  --font-sans: var(--font-montserrat);
+  /* Dual-Font Typography Setup */
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-montserrat);
+  --font-montserrat: var(--font-montserrat);
+
+  /* Mapping generic theme primitives for Dashboard V4 compliance */
+  --color-zinc-50: oklch(0.985 0 0);
+  --color-zinc-900: oklch(0.269 0 0);
+  --color-indigo-500: oklch(0.511 0.262 276.966);
+  --color-orange-600: oklch(0.646 0.222 41.116);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -124,6 +157,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

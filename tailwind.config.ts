@@ -15,6 +15,11 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-inter)", "sans-serif"],
+        heading: ["var(--font-montserrat)", "sans-serif"],
+        montserrat: ["var(--font-montserrat)", "sans-serif"],
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

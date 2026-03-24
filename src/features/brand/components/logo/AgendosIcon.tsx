@@ -30,8 +30,8 @@ export const AgendosIcon: React.FC<AgendosIconProps> = ({
       className={className}
     >
       <defs>
-        <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style={{ stopColor: '#007AFF', stopOpacity: 1 }} /><stop offset="100%" style={{ stopColor: '#0055CC', stopOpacity: 1 }} /></linearGradient>
-        <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style={{ stopColor: '#FF7A00', stopOpacity: 1 }} /><stop offset="100%" style={{ stopColor: '#FF5500', stopOpacity: 1 }} /></linearGradient>
+        <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style={{ stopColor: 'var(--brand-primary)', stopOpacity: 1 }} /><stop offset="100%" style={{ stopColor: 'var(--brand-primary-dark)', stopOpacity: 1 }} /></linearGradient>
+        <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style={{ stopColor: 'var(--brand-secondary)', stopOpacity: 1 }} /><stop offset="100%" style={{ stopColor: 'var(--brand-secondary-dark)', stopOpacity: 1 }} /></linearGradient>
       </defs>
 
       {/* Progress Ring */}
@@ -42,7 +42,7 @@ export const AgendosIcon: React.FC<AgendosIconProps> = ({
       {/* Abstract 'A' shape that forms an upward arrow */}
       <path d="M -20,18 L 0,-22 L 20,18 L 10,18 L 0,2 L -10,18 Z" fill={pathFill} />
       {/* Focus Dot */}
-      <circle cx="0" cy="12" r="6" fill="#FF7A00" />
+      <circle cx="0" cy="12" r="6" fill="var(--brand-secondary)" />
     </svg>
   );
 

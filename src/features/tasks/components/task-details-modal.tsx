@@ -29,7 +29,7 @@ export function TaskDetailsModal({ task, isOpen, onClose, onUpdateTask }: TaskDe
     if (!isOpen) return null
 
     const urgency = urgencyConfig[task.urgency as keyof typeof urgencyConfig] || urgencyConfig.medium
-    const energy = energyConfig[task.energy_required as string] || energyConfig.medium
+    const energy = energyConfig[task.energy_required as string] || energyConfig.moderate
 
     const handleToggleStatus = () => {
         const newStatus = task.status === "completed" ? "not_started" : "completed"

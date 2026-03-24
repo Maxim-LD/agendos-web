@@ -82,7 +82,7 @@ export function useSignupForm() {
         })
         // On success, store the user in state, and navigate to the onboarding flow with the email as a query param
         login(result.data.user, result.data.accessToken)
-        router.push(`/onboarding?email=${formData.email}`)
+        router.push(`/onboarding`)
       } else {
         setFormError(result.message || "Something went wrong. Please try again.")
       }

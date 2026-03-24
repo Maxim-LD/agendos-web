@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ComingSoonModal } from "@/components/ui/coming-soon-modal"
 import { Check, Info, AlertCircle, Loader2, ListTodo, Flame, Clock } from "lucide-react"
 import api from "@/lib/api"
+import { useAuth } from "@/providers"
 
 const TOTAL_STEPS = 4
 
@@ -245,6 +246,7 @@ interface CapacityStepProps {
 }
 
 const CapacityStep: FC<CapacityStepProps> = ({ onNext, onBack, data, updateData }) => {
+  const { accessToken } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -258,6 +260,7 @@ const CapacityStep: FC<CapacityStepProps> = ({ onNext, onBack, data, updateData 
         {
           method: 'PATCH',
           headers: {
+            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(profileData),

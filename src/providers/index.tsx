@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation"
 import { createContext, useContext, useState, useEffect, useCallback } from "react"
 import { User } from "@/types/user"
 import { ToastProvider } from "./toast-provider"
-import api from "@/lib/api";
+import { tokenManager } from "@/lib/auth/tokenManager";
+import { authService } from "@/lib/auth/authService";
 
 interface AuthContextType {
     user: User | null
@@ -42,13 +43,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         setUser(userData);
         setAccessToken(token);
+        tokenManager.setToken(token); // Store solely in memory manager
         localStorage.setItem('user', JSON.stringify(userData));
-        localStorage.setItem('accessToken', token);
     }, []);
 
     const logout = useCallback(() => {
+        tokenManager.setToken(null);
         localStorage.removeItem('user');
-        localStorage.removeItem('accessToken');
         setUser(null);
         setAccessToken(null);
         router.replace('/auth/login');
@@ -58,8 +59,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         // Clear user state but trigger modal instead of immediate redirect
         setUser(null);
         setAccessToken(null);
+        tokenManager.setToken(null);
         localStorage.removeItem('user');
-        localStorage.removeItem('accessToken');
         setIsSessionExpired(true);
     }, []);
 
@@ -90,22 +91,34 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         if (initialized.current) return;
 
         const initializeAuth = async () => {
-            const storedToken = localStorage.getItem('accessToken')
-            const storedUser = localStorage.getItem('user')
+            const storedToken = tokenManager.getToken();
+            const storedUser = localStorage.getItem('user');
 
-            // If we have a token, restore session optimistically
-            if (storedToken) {
+            if (storedToken && storedUser) {
+                try {
+                    setUser(JSON.parse(storedUser));
+                    setAccessToken(storedToken);
+                    initialized.current = true;
+                    setIsLoading(false);
+                    return; // Skip backend refresh if we already have a valid token
+                } catch (e) { /* fallthrough */ }
+            }
+
+            // Important: If we have no record of a user, we are anonymous.
+            // Do NOT hit the backend asking for a token refresh. 
+            if (!storedUser) {
                 initialized.current = true;
+                setIsLoading(false);
+                return;
+            }
 
-                // Optimistically log in to prevent flashing
-                if (storedUser) {
-                    try {
-                        setUser(JSON.parse(storedUser));
-                        setAccessToken(storedToken);
-                    } catch (e) {
-                        console.error("Failed to parse stored user", e)
-                    }
-                }
+            try {
+                const { token, user: restoredUser } = await authService.restoreSession();
+                initialized.current = true;
+                if (restoredUser) setUser(restoredUser);
+                setAccessToken(token);
+            } catch (err) {
+                // Ignore silent failures (e.g. refresh cookie actually expired)
             }
 
             setIsLoading(false);

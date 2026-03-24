@@ -1,16 +1,5 @@
-let isRefreshing = false;
-let failedQueue: Array<{ resolve: (token: string) => void, reject: (err: any) => void }> = [];
-
-const processQueue = (error: any, token: string | null = null) => {
-    failedQueue.forEach(prom => {
-        if (error) {
-            prom.reject(error);
-        } else if (token) {
-            prom.resolve(token);
-        }
-    });
-    failedQueue = [];
-};
+import { tokenManager } from "./auth/tokenManager";
+import { refreshManager } from "./auth/refreshManager";
 
 const api = {
     async request(
@@ -19,9 +8,8 @@ const api = {
     ) {
         const headers = new Headers(options.headers || {});
 
-        // Get token from localStorage to ensure it's available during initial load
-        // and outside of a component's direct lifecycle.
-        let token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+        // Get token securely from the memory manager
+        let token = tokenManager.getToken();
         if (token && !headers.has('Authorization')) {
             headers.set('Authorization', `Bearer ${token}`);
         }
@@ -39,57 +27,18 @@ const api = {
             return response;
         }
 
-        // Handle 401: Token expired
-        if (isRefreshing) {
-            // Wait for the ongoing refresh to finish
-            return new Promise<string>((resolve, reject) => {
-                failedQueue.push({ resolve, reject });
-            }).then(newToken => {
-                headers.set('Authorization', `Bearer ${newToken}`);
-                return executeRequest();
-            }).catch(err => {
-                return response; // Return the original 401 response if refresh failed
-            });
-        }
-
-        isRefreshing = true;
-
+        // Handle 401: Token expired or invalid
         try {
-            const refreshRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh-token`, {
-                method: 'POST',
-                credentials: 'include'
-            });
+            // refreshManager handles the concurrency locks internally
+            const newToken = await refreshManager.refreshToken();
+            headers.set('Authorization', `Bearer ${newToken}`);
 
-            if (!refreshRes.ok) throw new Error("Refresh failed");
-
-            const refreshData = await refreshRes.json();
-            const newToken = refreshData.data?.token;
-
-            if (newToken && typeof window !== 'undefined') {
-                localStorage.setItem('accessToken', newToken);
-                if (refreshData.data?.user) {
-                    localStorage.setItem('user', JSON.stringify(refreshData.data.user));
-                }
-                headers.set('Authorization', `Bearer ${newToken}`);
-                processQueue(null, newToken);
-
-                // Retry original request
-                return executeRequest();
-            } else {
-                throw new Error("No token returned");
-            }
+            // Retry the original request with the fresh token
+            return await executeRequest();
         } catch (err) {
-            processQueue(err, null);
-            // Optionally clear local storage to force login
-            if (typeof window !== 'undefined') {
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('user');
-                // Emit a custom event to trigger logout in AuthProvider
-                window.dispatchEvent(new Event('sessionExpired'));
-            }
+            // If the refresh orchestrator fails, return the original 401 
+            // to allow the UI to handle it conventionally if needed
             return response;
-        } finally {
-            isRefreshing = false;
         }
     }
 };

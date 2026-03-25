@@ -96,17 +96,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             const storedToken = tokenManager.getToken();
             const storedUser = localStorage.getItem('user');
 
-            if (storedToken && storedUser) {
-                try {
-                    setUser(JSON.parse(storedUser));
-                    setAccessToken(storedToken);
-                    initialized.current = true;
-                    setIsLoading(false);
-                    return; // Skip backend refresh if we already have a valid token
-                } catch (e) { /* fallthrough */ }
-            }
-
-            // Important: If we have no record of a user, we are anonymous.
+            // If we have no record of a user, we are anonymous.
             // Do NOT hit the backend asking for a token refresh. 
             if (!storedUser) {
                 initialized.current = true;
@@ -114,15 +104,24 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 return;
             }
 
+            // Always attempt a fresh token refresh via the HttpOnly cookie.
+            // The stored access token (30m lifetime) is unreliable after closing the app.
             try {
                 const { token, user: restoredUser } = await authService.restoreSession();
-                initialized.current = true;
                 if (restoredUser) setUser(restoredUser);
                 setAccessToken(token);
             } catch (err) {
-                // Ignore silent failures (e.g. refresh cookie actually expired)
+                // Refresh failed — fall back to the stored token if we have one.
+                // It may still be valid for a few minutes after restart.
+                if (storedToken) {
+                    try {
+                        setUser(JSON.parse(storedUser));
+                        setAccessToken(storedToken);
+                    } catch (e) { /* invalid JSON, clear state */ }
+                }
             }
 
+            initialized.current = true;
             setIsLoading(false);
         };
 

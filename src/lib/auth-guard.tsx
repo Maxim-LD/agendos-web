@@ -37,3 +37,26 @@ export function withAuth<P extends object>(Component: React.ComponentType<P>) {
     )
   }
 }
+
+export function GuestGuard({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      router.replace("/dashboard")
+    }
+  }, [user, isLoading, router])
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[50vh] w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+      </div>
+    )
+  }
+
+  if (user) return null
+
+  return <>{children}</>
+}

@@ -6,6 +6,7 @@ import { EditProfileModal } from "@/features/profile/components/edit-profile-mod
 import { ProfileHeader } from "@/features/profile/components/profile-header"
 import { VerificationSection } from "@/features/profile/components/verification-section"
 import { SettingsSection } from "@/features/profile/components/settings-section"
+import { AccountDetailsSection } from "@/features/profile/components/account-details-section"
 import { useProfilePage } from "@/features/profile/lib/use-profile-page"
 import { withAuth } from "@/lib/auth-guard"
 
@@ -24,7 +25,7 @@ function ProfilePageContentBase() {
 
   if (isLoading || !user) {
     return (
-      <div className="container mx-auto max-w-5xl px-4 py-6">
+      <div className="container mx-auto max-w-4xl px-4 py-6">
         <div className="space-y-6">
           <div>
             <Skeleton className="h-9 w-32" />
@@ -49,22 +50,25 @@ function ProfilePageContentBase() {
 
   return (
     <>
-    <div className="container mx-auto max-w-5xl px-1 py-0.5">
-        <div className="space-y-6">
-          {/* Header */}
-          <div>
+      <div className="container mx-auto max-w-4xl px-4 py-6 md:py-8">
+        <div className="space-y-6 max-w-3xl mx-auto">
+          {/* Header text removed in favor of the hero card, or can be kept subtle */}
+          <div className="mb-2">
             <h1 className="text-3xl font-bold text-charcoal-black">Profile</h1>
-            <p className="text-charcoal-black/60 mt-1">Manage your account</p>
+            <p className="text-charcoal-black/60 mt-1">Manage your account and privacy</p>
           </div>
 
-        {/* Profile Card */}
-        <ProfileHeader user={user} onEditClick={() => setEditProfileOpen(true)} />
+          {/* Profile Card */}
+          <ProfileHeader user={user} onEditClick={() => setEditProfileOpen(true)} />
 
-        {/* Verification Status */}
-        <VerificationSection user={user} />
+          {/* Account Details */}
+          <AccountDetailsSection user={user} />
 
-        {/* Profile Settings Sections */}
-        <div className="space-y-4">
+          {/* Verification Status */}
+          <VerificationSection user={user} />
+
+          {/* Profile Settings Sections */}
+          <div className="space-y-4">
             {profileSections.map((section, index) => (
               <SettingsSection key={section.title} section={section} index={index} />
             ))}
@@ -72,7 +76,7 @@ function ProfilePageContentBase() {
         </div>
       </div>
       <ComingSoonModal open={comingSoonOpen} onOpenChange={setComingSoonOpen} featureName={selectedFeature} />
-      <EditProfileModal open={editProfileOpen} onOpenChange={setEditProfileOpen} onSave={() => { setEditProfileOpen(false); handleFeatureClick("Saving Profile") }} />
+      <EditProfileModal open={editProfileOpen} onOpenChange={setEditProfileOpen} onSave={() => { setEditProfileOpen(false); handleFeatureClick("Saving Profile") }} user={user} />
     </>
   )
 }

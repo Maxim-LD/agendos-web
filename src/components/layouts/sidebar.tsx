@@ -10,6 +10,12 @@ import { useAuth } from "@/providers"
 import { LogOut, Menu, User, Mail } from "lucide-react"
 import { navItems } from "./constants"
 import { useSidebar } from "./use-sidebar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export function Sidebar() {
   const { isExpanded, setIsExpanded } = useSidebar()
@@ -39,21 +45,25 @@ export function Sidebar() {
               5
             </span>
           </Button>
-          <div className="relative group">
-            <Button variant="ghost" size="icon">
-              <User className="h-5 w-5" />
-            </Button>
-            <div className="absolute right-0 top-full hidden w-48 flex-col rounded-md border bg-white py-1 shadow-lg group-hover:flex">
-              <Link href="/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                <User className="h-4 w-4" />
-                Profile
-              </Link>
-              <button onClick={logout} className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-500 hover:bg-red-50">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <User className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-100 shadow-lg p-1">
+              <DropdownMenuItem asChild className="cursor-pointer">
+                <Link href="/profile" className="flex items-center gap-2 w-full">
+                  <User className="h-4 w-4" />
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={logout} className="flex cursor-pointer items-center gap-2 w-full text-red-500 focus:text-red-600 focus:bg-red-50">
                 <LogOut className="h-4 w-4" />
                 Log Out
-              </button>
-            </div>
-          </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
       {/* Spacer to prevent fixed header from covering content */}

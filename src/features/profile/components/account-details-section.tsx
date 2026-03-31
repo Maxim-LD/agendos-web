@@ -53,21 +53,21 @@ export const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({ us
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
-            className="bg-white rounded-xl p-6 shadow-sm border border-gray-200"
+            className="bg-card rounded-2xl p-6 shadow-sm border border-border/40"
         >
             <div className="flex items-center gap-2 mb-6">
-                <Info className="w-5 h-5 text-electric-blue" />
-                <h3 className="text-lg font-bold text-charcoal-black">Account Details</h3>
+                <Info className="w-5 h-5 text-primary" />
+                <h3 className="text-lg font-bold text-foreground">Account Details</h3>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {details.map((detail, index) => (
-                    <div key={index} className="flex flex-col space-y-1 p-3 rounded-lg bg-gray-50/50 border border-transparent hover:border-gray-100 transition-colors">
-                        <div className="flex items-center gap-2 text-charcoal-black/60 text-sm font-medium">
-                            <detail.icon className="w-4 h-4 text-electric-blue/70" />
+                    <div key={index} className="flex flex-col space-y-1.5 p-3.5 rounded-xl bg-secondary/30 border border-transparent hover:border-border/60 transition-colors">
+                        <div className="flex items-center gap-2 text-muted-foreground text-sm font-semibold">
+                            <detail.icon className="w-4 h-4 text-primary/70" />
                             {detail.label}
                         </div>
-                        <div className={`text-base pl-6 ${detail.isMissing ? 'text-gray-400 italic' : 'text-charcoal-black font-medium'}`}>
+                        <div className={`text-base pl-6 ${detail.isMissing ? 'text-muted-foreground/50 italic' : 'text-foreground font-bold'}`}>
                             {detail.value}
                         </div>
                     </div>

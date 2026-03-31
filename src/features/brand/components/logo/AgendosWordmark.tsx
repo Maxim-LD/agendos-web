@@ -15,7 +15,7 @@ export const AgendosWordmark: React.FC<AgendosWordmarkProps> = ({
   variant = "default",
   href,
 }) => {
-  const textColor = variant === "inverse" ? "text-white" : "text-[#1E1E1E]";
+  const textColor = variant === "inverse" ? "text-white" : "text-[#1E1E1E] dark:text-white";
 
   const content = (
     <span className={cn("font-extrabold leading-none font-montserrat tracking-wider", textColor, className)}

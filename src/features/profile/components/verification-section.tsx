@@ -24,15 +24,15 @@ export const VerificationSection: React.FC<VerificationSectionProps> = ({ user }
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-xl p-6 shadow-sm border border-gray-200"
+            className="bg-card rounded-2xl p-6 shadow-sm border border-border/40"
         >
             <div className="flex items-center gap-2 mb-4">
-                <Shield className="w-5 h-5 text-electric-blue" />
-                <h3 className="text-lg font-bold text-charcoal-black">Verification</h3>
+                <Shield className="w-5 h-5 text-primary" />
+                <h3 className="text-lg font-bold text-foreground font-heading tracking-tight">Verification</h3>
             </div>
             <div className="space-y-3">
                 <div className="flex items-center justify-between py-2">
-                    <span className="text-charcoal-black/80">Email</span>
+                    <span className="text-foreground/80 font-medium">Email</span>
                     {user.isEmailVerified ? (
                         <div className="flex items-center gap-2 text-green-600"> <CheckCircle2 className="w-5 h-5" /> <span>Verified</span> </div>
                     ) : (
@@ -41,8 +41,8 @@ export const VerificationSection: React.FC<VerificationSectionProps> = ({ user }
                                 <span className="text-sm text-gray-500 italic">Verification email sent. Please check your inbox.</span>
                             ) : (
                                 <>
-                                    <div className="flex items-center gap-2 text-yellow-600"> <AlertTriangle className="w-5 h-5" /> <span>Not Verified</span> </div>
-                                    <Button variant="link" className="p-0 h-auto text-electric-blue" onClick={handleSendVerificationEmail} disabled={isLoading}>
+                                    <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-500"> <AlertTriangle className="w-5 h-5" /> <span>Not Verified</span> </div>
+                                    <Button variant="link" className="p-0 h-auto text-primary font-semibold" onClick={handleSendVerificationEmail} disabled={isLoading}>
                                         {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verify"}
                                     </Button>
                                 </>
@@ -61,11 +61,11 @@ export const VerificationSection: React.FC<VerificationSectionProps> = ({ user }
                     </div>
                 )}
                 <div className="flex items-center justify-between py-2">
-                    <span className="text-charcoal-black/80">Phone Number</span>
+                    <span className="text-foreground/80 font-medium">Phone Number</span>
                     {user.isPhoneVerified ? (
                         <div className="flex items-center gap-2 text-green-600"> <CheckCircle2 className="w-5 h-5" /> <span>Verified</span> </div>
                     ) : (
-                        <div className="flex items-center gap-2 text-yellow-600"> <AlertTriangle className="w-5 h-5" /> <span>Not Verified</span> </div>
+                        <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-500"> <AlertTriangle className="w-5 h-5" /> <span>Not Verified</span> </div>
                     )}
                 </div>
             </div>

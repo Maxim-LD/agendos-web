@@ -33,28 +33,27 @@ export function LoginForm() {
 
   return (
     <>
-      <div className="w-full max-w-lg bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
-        <div className="text-center lg:text-left">
-          <h1 className="text-2xl font-bold text-charcoal-black mb-1">Welcome Back!</h1>
-          <p className="text-charcoal-black/60 mb-8">Sign in to continue your journey.</p>
+      <div className="w-full max-w-lg bg-card p-6 sm:p-8 rounded-3xl shadow-xl border border-border/40">
+        <div className="text-center lg:text-left mb-8">
+          <h1 className="text-2xl font-bold text-foreground mb-2 font-heading tracking-tight">Welcome Back</h1>
+          <p className="text-muted-foreground font-medium text-sm">Sign in to continue your journey.</p>
         </div>
 
         {formError && (
-          <Alert variant="destructive">
+          <Alert variant="destructive" className="mb-6 border-destructive/20 bg-destructive/10">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{formError}</AlertDescription>
+            <AlertDescription className="font-semibold">{formError}</AlertDescription>
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="identifier">Email or Phone Number</Label>
+            <Label htmlFor="identifier" className="font-semibold text-foreground/80">Email or Phone Number</Label>
             <Input
               id="identifier"
               name="identifier"
               type="text"
-              placeholder="email@example.com or 080123..."
-              className="placeholder:text-charcoal-black/40"
+              placeholder="name@example.com"
               value={formData.identifier}
               onChange={handleChange}
               required
@@ -62,24 +61,29 @@ export function LoginForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password" className="font-semibold text-foreground/80">Password</Label>
+              <Link href="/auth/forgot-password" className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors">
+                Forgot password?
+              </Link>
+            </div>
             <div className="relative">
               <Input
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
-                className="placeholder:text-charcoal-black/40"
                 value={formData.password}
                 onChange={handleChange}
                 required
                 disabled={isLoading}
+                className="pr-10"
               />
               <Button
                 type="button"
                 variant="ghost"
-                size="sm"
-                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                size="icon"
+                className="absolute right-1 top-1 h-8 w-8 text-muted-foreground hover:bg-transparent hover:text-foreground"
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={isLoading}
               >
@@ -87,41 +91,35 @@ export function LoginForm() {
               </Button>
             </div>
           </div>
-
-          <div className="flex justify-end">
-            <Link href="/auth/forgot-password" className="text-sm text-blue-600 hover:text-blue-500">
-              Forgot password?
-            </Link>
-          </div>
           
-          <Button type="submit" className="w-full bg-[#FF7A00] hover:bg-[#E66E00] text-white font-bold py-3" disabled={isLoading}>
+          <Button type="submit" className="w-full font-bold py-6 text-base rounded-xl mt-2" disabled={isLoading}>
             {isLoading ? "Signing In..." : "Sign In"}
           </Button>
         </form>
 
-        <div className="relative my-6">
+        <div className="relative mt-8 mb-6">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
+            <span className="w-full border-t border-border" />
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-charcoal-black/60">Or continue with</span>
+          <div className="relative flex justify-center text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            <span className="bg-card px-3">Or continue with</span>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <Button variant="outline" className="flex items-center gap-2" onClick={() => handleSocialLoginClick("Google")}>
+          <Button variant="outline" className="flex items-center gap-2 h-11 rounded-xl bg-secondary/30 hover:bg-secondary font-semibold" onClick={() => handleSocialLoginClick("Google")}>
             <GoogleIcon className="w-5 h-5" />
             Google
           </Button>
-          <Button variant="outline" className="flex items-center gap-2" onClick={() => handleSocialLoginClick("Facebook")}>
+          <Button variant="outline" className="flex items-center gap-2 h-11 rounded-xl bg-secondary/30 hover:bg-secondary font-semibold" onClick={() => handleSocialLoginClick("Facebook")}>
             <FacebookIcon className="w-5 h-5" />
             Facebook
           </Button>
         </div>
 
-        <p className="mt-6 text-center text-sm text-charcoal-black/60">
+        <p className="mt-8 text-center text-sm font-medium text-muted-foreground">
           Don&apos;t have an account?{" "}
-          <Link href="/auth/signup" className="font-semibold text-electric-blue hover:underline">
+          <Link href="/auth/signup" className="font-bold text-primary hover:underline">
             Sign Up
           </Link>
         </p>

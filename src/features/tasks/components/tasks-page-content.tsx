@@ -13,9 +13,9 @@ import { useState } from "react"
 import { Task } from "@/types/tasks"
 
 const urgencyLevels = {
-  low: { icon: Clock, label: "Flexible", description: "No strict deadline", color: "text-teal-500", bg: "bg-teal-50", border: "border-teal-200" },
-  medium: { icon: AlertCircle, label: "Upcoming", description: "Due soon", color: "text-orange-500", bg: "bg-orange-50", border: "border-orange-200" },
-  high: { icon: Flame, label: "Critical", description: "Immediate attention", color: "text-rose-500", bg: "bg-rose-50", border: "border-rose-200" },
+  low: { icon: Clock, label: "Flexible", description: "No strict deadline", color: "text-teal-600 dark:text-teal-400", bg: "bg-teal-50 dark:bg-teal-500/10", border: "border-teal-200 dark:border-teal-500/20" },
+  medium: { icon: AlertCircle, label: "Upcoming", description: "Due soon", color: "text-orange-600 dark:text-orange-400", bg: "bg-orange-50 dark:bg-orange-500/10", border: "border-orange-200 dark:border-orange-500/20" },
+  high: { icon: Flame, label: "Critical", description: "Immediate attention", color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/20" },
 }
 
 function TasksPageContentBase() {
@@ -52,49 +52,49 @@ function TasksPageContentBase() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-charcoal-black">Tasks</h1>
-            <p className="text-charcoal-black/60 mt-1">Manage and track your daily goals.</p>
+            <h1 className="text-3xl font-bold text-foreground font-heading tracking-tight">Tasks</h1>
+            <p className="text-muted-foreground mt-1 text-sm font-medium">Manage and track your daily goals.</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={() => fetchTasks(true)} title="Refresh tasks">
-              <RefreshCcw className={cn("h-4 w-4", isLoadingTasks && "animate-spin")} />
+            <Button variant="outline" size="icon" onClick={() => fetchTasks(true)} title="Refresh tasks" className="rounded-full">
+              <RefreshCcw className={cn("h-4 w-4 text-muted-foreground", isLoadingTasks && "animate-spin")} />
             </Button>
-            <Button onClick={() => setIsCreating(true)} className="bg-[#FF7A00] hover:bg-[#E66E00] text-white gap-2">
+            <Button onClick={() => setIsCreating(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 rounded-full px-5 shadow-sm">
               <Plus className="h-4 w-4" />
               Add Task
             </Button>
           </div>
         </div>
 
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <div className="relative group">
+          <Search className="absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
           <Input
             placeholder="Search tasks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="pl-11 h-12 bg-card border-border/60 hover:border-border rounded-xl text-base shadow-sm focus-visible:ring-primary/20"
           />
         </div>
 
         <div className="grid gap-4">
           {isLoadingTasks ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/50" />
             </div>
           ) : filteredTasks.length === 0 ? (
             tasks.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 py-12 text-center">
-                <div className="mb-4 rounded-full bg-white p-4 shadow-sm">
-                  <Calendar className="h-8 w-8 text-gray-400" />
+              <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border/80 bg-muted/40 p-12 text-center animate-in fade-in duration-500">
+                <div className="mb-5 rounded-full bg-card p-4 shadow-sm border border-border/60">
+                  <Calendar className="h-8 w-8 text-muted-foreground" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900">No tasks yet</h3>
-                <p className="text-sm text-gray-500">Create your first task to get started.</p>
-                <Button variant="link" onClick={() => setIsCreating(true)} className="mt-2 text-[#FF7A00]">
+                <h3 className="text-lg font-bold text-foreground">No tasks yet</h3>
+                <p className="text-sm font-medium text-muted-foreground mt-1">Create your first task to get started.</p>
+                <Button variant="link" onClick={() => setIsCreating(true)} className="mt-4 text-primary font-bold">
                   Create a task
                 </Button>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-center text-gray-500">
+              <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground font-medium bg-muted/40 rounded-2xl border border-dashed border-border/80">
                 <p>No tasks found matching "{searchQuery}"</p>
               </div>
             )
@@ -107,42 +107,42 @@ function TasksPageContentBase() {
                   key={task.id}
                   onClick={() => setSelectedTask(task)}
                   className={cn(
-                    "cursor-pointer group flex items-start gap-4 rounded-xl border bg-white p-4 shadow-sm transition-all hover:shadow-md",
-                    task.status === "completed" && "bg-gray-50 opacity-75"
+                    "cursor-pointer group flex items-start gap-4 rounded-2xl border border-border/60 bg-card p-4.5 shadow-sm transition-all hover:shadow-md hover:border-border",
+                    task.status === "completed" && "bg-secondary/40 dark:bg-card/60 opacity-90 scale-[0.99]"
                   )}
                 >
-                  <button onClick={(e) => { e.stopPropagation(); toggleTaskStatus(task.id, task.status); }} className="mt-1 flex-shrink-0 text-gray-400 hover:text-[#00BFA6]">
-                    {task.status === "completed" ? <CheckCircle2 className="h-5 w-5 text-[#00BFA6]" /> : <Circle className="h-5 w-5" />}
+                  <button onClick={(e) => { e.stopPropagation(); toggleTaskStatus(task.id, task.status); }} className="mt-0.5 flex-shrink-0 text-muted-foreground/30 hover:text-primary transition-colors">
+                    {task.status === "completed" ? <CheckCircle2 className="h-6 w-6 text-primary" /> : <Circle className="h-6 w-6" />}
                   </button>
-                  <div className="flex-1 space-y-1">
-                    <div className="flex items-start justify-between">
-                      <h3 className={cn("font-semibold text-gray-900", task.status === "completed" && "line-through text-gray-500")}>
+                  <div className="flex-1 space-y-1.5 min-w-0">
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className={cn("font-bold text-base text-foreground truncate transition-colors", task.status === "completed" && "line-through text-muted-foreground")}>
                         {task.title}
                       </h3>
-                      <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }} className="h-8 w-8 text-gray-400 opacity-0 transition-opacity hover:text-red-500 group-hover:opacity-100">
+                      <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }} className="h-8 w-8 text-muted-foreground/40 shrink-0 opacity-0 transition-all hover:text-destructive group-hover:opacity-100 hover:bg-destructive/10">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
-                    {task.description && <p className="text-sm text-gray-500">{task.description}</p>}
-                    <div className="flex items-center gap-3 pt-2 text-xs">
-                      <div className={cn("flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-medium border", urgencyConfig.bg, urgencyConfig.color, urgencyConfig.border)}>
-                        <UrgencyIcon className="h-3 w-3" />
+                    {task.description && <p className="text-sm text-muted-foreground line-clamp-2">{task.description}</p>}
+                    <div className="flex flex-wrap items-center gap-3 pt-2.5 text-xs font-semibold">
+                      <div className={cn("flex items-center gap-1.5 rounded-md px-2 py-0.5 font-bold border", urgencyConfig.bg, urgencyConfig.color, urgencyConfig.border)}>
+                        <UrgencyIcon className="h-3.5 w-3.5" />
                         <span className="capitalize">{task.urgency}</span>
                       </div>
                       {task.due_date && (
-                        <div className="flex items-center gap-1.5 text-gray-500">
-                          <Calendar className="h-3 w-3" />
+                        <div className="flex items-center gap-1.5 text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded-md border border-border/30">
+                          <Calendar className="h-3.5 w-3.5" />
                           <span>{new Date(task.due_date).toLocaleDateString()}</span>
                         </div>
                       )}
-                      <div className="flex items-center gap-1.5 text-gray-500 border-l pl-3">
-                        <span className="text-xs font-medium">{task.progress_percentage}%</span>
-                        <div className="h-1.5 w-12 overflow-hidden rounded-full bg-gray-100">
-                          <div className="h-full bg-[#00BFA6]" style={{ width: `${task.progress_percentage}%` }} />
+                      <div className="flex items-center gap-2 text-muted-foreground border-l border-border/60 pl-3">
+                        <span className="text-xs font-bold">{task.progress_percentage}%</span>
+                        <div className="h-1.5 w-16 overflow-hidden rounded-full bg-secondary border border-border/40">
+                          <div className="h-full bg-primary transition-all rounded-full" style={{ width: `${task.progress_percentage}%` }} />
                         </div>
                       </div>
                       {task.reminders && (
-                        <Bell className="h-3 w-3 text-gray-400" />
+                        <Bell className="h-3.5 w-3.5 text-primary ml-auto" />
                       )}
                     </div>
                   </div>
@@ -154,17 +154,17 @@ function TasksPageContentBase() {
       </div>
 
       {isCreating && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-lg space-y-6 rounded-xl bg-white p-6 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-lg space-y-6 rounded-3xl bg-card border border-border/40 p-6 sm:p-8 shadow-2xl">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-charcoal-black">Add New Task</h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsCreating(false)}>
+              <h2 className="text-xl font-bold text-foreground font-heading">Add New Task</h2>
+              <Button variant="ghost" size="icon" onClick={() => setIsCreating(false)} className="rounded-full hover:bg-secondary text-muted-foreground">
                 <X className="h-5 w-5" />
               </Button>
             </div>
             {error && (
-              <div className="flex items-center gap-2 rounded-md bg-red-50 p-3 text-sm text-red-600">
-                <AlertCircle className="h-4 w-4" />
+              <div className="flex items-center gap-2 rounded-xl bg-destructive/10 p-3.5 text-sm font-semibold text-destructive border border-destructive/20">
+                <AlertCircle className="h-4 w-4 shrink-0" />
                 {error}
               </div>
             )}
@@ -237,17 +237,17 @@ function TasksPageContentBase() {
                   <input
                     type="checkbox"
                     id="reminders"
-                    className="h-4 w-4 rounded border-gray-300 text-[#FF7A00] focus:ring-[#FF7A00]"
+                    className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20 accent-primary"
                     checked={newTask.reminders}
                     onChange={handleNewTaskChange}
                   />
-                  <Label htmlFor="reminders" className="cursor-pointer">Reminders</Label>
+                  <Label htmlFor="reminders" className="cursor-pointer font-semibold text-muted-foreground">Reminders</Label>
                 </div>
               </div>
-              <div className="flex justify-end gap-3 pt-4">
-                <Button variant="outline" onClick={() => setIsCreating(false)} disabled={isSubmitting}>Cancel</Button>
-                <Button onClick={handleCreateTask} disabled={!newTask.title || isSubmitting} className="bg-[#FF7A00] hover:bg-[#E66E00] text-white">
-                  {isSubmitting ? "Creating..." : "Create Task"}
+              <div className="flex justify-end gap-3 pt-6 border-t border-border/20">
+                <Button variant="ghost" onClick={() => setIsCreating(false)} disabled={isSubmitting}>Cancel</Button>
+                <Button onClick={handleCreateTask} disabled={!newTask.title || isSubmitting} className="rounded-xl px-6 min-w-32">
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Create Task"}
                 </Button>
               </div>
             </div>

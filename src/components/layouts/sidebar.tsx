@@ -16,6 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export function Sidebar() {
   const { isExpanded, setIsExpanded } = useSidebar()
@@ -24,7 +25,7 @@ export function Sidebar() {
 
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-30 flex h-16 items-center justify-between border-b bg-white px-4 shadow-sm">
+      <header className="fixed left-0 right-0 top-0 z-30 flex h-16 items-center justify-between border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6 shadow-sm">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -39,28 +40,29 @@ export function Sidebar() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="relative" title="Messages">
+          <ThemeToggle />
+          <Button variant="ghost" size="icon" className="relative group text-muted-foreground hover:text-foreground" title="Messages">
             <Mail className="h-5 w-5" />
-            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
-              5
+            <span className="absolute right-1.5 top-1.5 flex h-2 w-2 items-center justify-center rounded-full bg-primary ring-2 ring-background transition-transform group-hover:scale-110">
+              <span className="sr-only">New messages</span>
             </span>
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="rounded-full bg-primary/10 hover:bg-primary/20 text-primary">
+                <User className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-100 shadow-lg p-1">
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link href="/profile" className="flex items-center gap-2 w-full">
-                  <User className="h-4 w-4" />
-                  Profile
+            <DropdownMenuContent align="end" className="w-56 p-2 rounded-xl border border-border/50 shadow-lg">
+              <DropdownMenuItem asChild className="cursor-pointer rounded-lg py-2">
+                <Link href="/profile" className="flex items-center gap-2.5 w-full">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Profile</span>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={logout} className="flex cursor-pointer items-center gap-2 w-full text-red-500 focus:text-red-600 focus:bg-red-50">
+              <DropdownMenuItem onClick={logout} className="flex cursor-pointer items-center gap-2.5 w-full text-destructive focus:text-destructive focus:bg-destructive/10 rounded-lg py-2 mt-1">
                 <LogOut className="h-4 w-4" />
-                Log Out
+                <span className="font-medium">Log Out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -77,21 +79,23 @@ export function Sidebar() {
       />
       <aside
         className={cn(
-          "fixed left-0 top-16 z-20 flex h-[calc(100vh-4rem)] w-64 flex-col border-r bg-white shadow-lg transition-transform duration-300 ease-in-out",
+          "fixed left-0 top-16 z-20 flex h-[calc(100vh-4rem)] w-64 flex-col border-r border-border/40 bg-card shadow-sm transition-transform duration-300 ease-in-out",
           isExpanded ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <nav className="flex-1 space-y-2 p-4">
+        <nav className="flex-1 space-y-1.5 p-4">
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
               <Button
                 variant={pathname === item.href ? "secondary" : "ghost"}
                 className={cn(
-                  "w-full justify-start gap-3",
-                  pathname === item.href ? "text-electric-blue" : "text-charcoal-black/70"
+                  "w-full justify-start gap-3 h-11 px-4 font-semibold text-sm transition-all",
+                  pathname === item.href 
+                    ? "bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                 )}
               >
-                <item.icon className="h-5 w-5" />
+                <item.icon className="h-5 w-5" strokeWidth={pathname === item.href ? 2.5 : 2} />
                 {item.label}
               </Button>
             </Link>

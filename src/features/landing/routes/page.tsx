@@ -181,7 +181,7 @@ export default function LandingPage() {
                   Get Things Done with <br className="hidden lg:block" />
                   <span className="text-primary">AGENDOS</span>
                 </h1>
-                <p className="text-lg sm:text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl mx-auto md:mx-0">
+                <p className="text-lg sm:text-xl text-zinc-400 dark:text-muted-foreground mb-10 leading-relaxed max-w-xl mx-auto md:mx-0">
                   The intelligent productivity app that helps you focus, achieve goals, and build lasting habits.
                   Transform your daily tasks into meaningful accomplishments.
                 </p>
@@ -425,7 +425,7 @@ export default function LandingPage() {
         </section>
 
         {/* Footer */}
-        <footer className="py-12 px-6 bg-zinc-950 dark:bg-background text-muted-foreground">
+        <footer className="py-12 px-6 bg-zinc-950 dark:bg-background text-zinc-400 dark:text-muted-foreground">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 mb-12">
               <div className="flex flex-col">

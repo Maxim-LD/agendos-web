@@ -22,10 +22,10 @@ export function ForgotPasswordForm({
   handleSubmit: (e: React.FormEvent) => void
 }) {
   return (
-    <div className="w-full max-w-lg bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
+    <div className="w-full max-w-lg bg-card p-6 sm:p-8 rounded-3xl shadow-xl border border-border/40">
       <div className="text-center lg:text-left">
-        <h1 className="text-2xl font-bold text-charcoal-black mb-1">Forgot Password?</h1>
-        <p className="text-charcoal-black/60 mb-8">Enter your email and we'll send you a reset link.</p>
+        <h1 className="text-2xl font-bold text-foreground mb-2 font-heading tracking-tight">Forgot Password?</h1>
+        <p className="text-muted-foreground font-medium text-sm mb-8">Enter your email and we'll send you a reset link.</p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
@@ -46,7 +46,7 @@ export function ForgotPasswordForm({
             disabled={isLoading}
           />
         </div>
-        <Button type="submit" className="w-full bg-[#FF7A00] hover:bg-[#E66E00] text-white font-bold py-3" disabled={isLoading || !email}>
+        <Button type="submit" className="w-full w-full font-bold py-6 text-base rounded-xl mt-2" disabled={isLoading || !email}>
           {isLoading ? "Sending..." : "Send Reset Link"}
         </Button>
         <Button asChild variant="ghost" className="w-full">
@@ -68,13 +68,13 @@ export function ForgotPasswordSuccess({
   handleReset: () => void
 }) {
   return (
-    <div className="w-full max-w-lg bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
+    <div className="w-full max-w-lg bg-card p-6 sm:p-8 rounded-3xl shadow-xl border border-border/40">
       <div className="text-center">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
           <CheckCircle className="h-6 w-6 text-green-600" />
         </div>
-        <h1 className="text-2xl font-bold text-charcoal-black">Check Your Email</h1>
-        <p className="text-charcoal-black/60 mt-2">We've sent password reset instructions to {email}</p>
+        <h1 className="text-2xl font-bold text-foreground">Check Your Email</h1>
+        <p className="text-muted-foreground mt-2">We've sent password reset instructions to {email}</p>
       </div>
       <div className="space-y-4 my-8">
         <Alert>
@@ -85,7 +85,7 @@ export function ForgotPasswordSuccess({
         </Alert>
       </div>
       <div className="flex flex-col space-y-2">
-        <Button asChild className="w-full bg-[#FF7A00] hover:bg-[#E66E00] text-white font-bold py-3">
+        <Button asChild className="w-full w-full font-bold py-6 text-base rounded-xl mt-2">
           <Link href="/auth/login">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Login

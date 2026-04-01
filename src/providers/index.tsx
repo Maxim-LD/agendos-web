@@ -47,7 +47,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('user', JSON.stringify(userData));
     }, []);
 
-    const logout = useCallback(() => {
+    const logout = useCallback(async () => {
+        // Run API hit in the background to ensure fast UI response 
+        //, but realistically we could await it
+        authService.logout().catch(console.error);
+
         tokenManager.setToken(null);
         localStorage.removeItem('user');
         localStorage.removeItem('tasks_cache');
@@ -58,6 +62,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const triggerSessionExpired = useCallback(() => {
         // Clear user state but trigger modal instead of immediate redirect
+        // We also fire a background logout to ensure backend is thoroughly cleared.
+        authService.logout().catch(console.error);
+
         setUser(null);
         setAccessToken(null);
         tokenManager.setToken(null);

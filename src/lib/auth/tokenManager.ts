@@ -1,5 +1,3 @@
-// src/lib/auth/tokenManager.ts
-
 /**
  * Manages the access token and gracefully syncs with localStorage
  * to survive page refreshes, ensuring we do not constantly hit the

@@ -41,10 +41,10 @@ export function SignupForm() {
 
   return (
     <>
-      <div className="w-full max-w-lg bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
+      <div className="w-full max-w-lg bg-card p-6 sm:p-8 rounded-3xl shadow-xl border border-border/40">
         <div className="text-center lg:text-left">
-          <h1 className="text-2xl font-bold text-charcoal-black mb-1">Get Started</h1>
-          <p className="text-charcoal-black/60 mb-8">It's free to sign up and only takes a minute.</p>
+          <h1 className="text-2xl font-bold text-foreground mb-2 font-heading tracking-tight">Get Started</h1>
+          <p className="text-muted-foreground font-medium text-sm mb-8">It's free to sign up and only takes a minute.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -57,7 +57,7 @@ export function SignupForm() {
                 type="text"
                 placeholder="John Doe"
                 value={formData.fullname}
-                className="placeholder:text-charcoal-black/40"
+                className="placeholder:text-muted-foreground/50"
                 onChange={handleChange}
                 required
                 disabled={isLoading}
@@ -72,7 +72,7 @@ export function SignupForm() {
                 type="email"
                 placeholder="john@example.com"
                 value={formData.email}
-                className="placeholder:text-charcoal-black/40"
+                className="placeholder:text-muted-foreground/50"
                 onChange={handleChange}
                 required
                 disabled={isLoading}
@@ -90,7 +90,7 @@ export function SignupForm() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Create a password"
                   value={formData.password}
-                  className="placeholder:text-charcoal-black/40"
+                  className="placeholder:text-muted-foreground/50"
                   onChange={handlePasswordChange}
                   onFocus={() => setIsPasswordFocused(true)}
                   onBlur={() => setIsPasswordFocused(false)}
@@ -130,7 +130,7 @@ export function SignupForm() {
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm your password"
                   value={formData.confirm_password}
-                  className="placeholder:text-charcoal-black/40"
+                  className="placeholder:text-muted-foreground/50"
                   onChange={handleChange}
                   required
                   disabled={isLoading}
@@ -149,7 +149,7 @@ export function SignupForm() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full bg-[#FF7A00] hover:bg-[#E66E00] text-white font-bold py-3" disabled={isLoading}>
+          <Button type="submit" className="w-full w-full font-bold py-6 text-base rounded-xl mt-2" disabled={isLoading}>
             {isLoading ? "Creating Account..." : "Create Account"}
           </Button>
 
@@ -166,7 +166,7 @@ export function SignupForm() {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-charcoal-black/60">Or continue with</span>
+            <span className="bg-card px-3 font-bold uppercase tracking-widest text-muted-foreground">Or continue with</span>
           </div>
         </div>
 
@@ -181,9 +181,9 @@ export function SignupForm() {
           </Button>
         </div>
 
-        <p className="mt-6 text-center text-sm text-charcoal-black/60">
+        <p className="mt-6 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link href="/auth/login" className="font-semibold text-electric-blue hover:underline">
+          <Link href="/auth/login" className="font-semibold text-primary hover:underline">
             Sign In
           </Link>
         </p>
